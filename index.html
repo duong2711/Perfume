@@ -83,23 +83,25 @@ align-items: center;
 justify-content: center;
 font-size: 12px;
 position: absolute;
-top: -8px;
-right: 8px; /* Đã sửa 8px */
+top: -5px;
+right: -1px; /* ĐÃ CHỈNH SỬA: Đặt sát góc trên bên phải của icon, giúp responsive tốt */
 }
 section {
 scroll-margin-top: 80px;
+}
+/* CSS MỚI: Đồng bộ khoảng cách giữa giá và nút Thêm vào giỏ */
+.flex.items-center.justify-between > span {
+  margin-right: 12px;
 }
 </style>
 <style>@view-transition { navigation: auto; }</style>
 <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
 </head>
 <body class="min-h-full bg-white text-gray-900">
-<div class="min-h-full flex flex-col"><!-- Header -->
-<header class="bg-white border-b border-gray-200 sticky top-0 z-50 w-full">
+<div class="min-h-full flex flex-col"><header class="bg-white border-b border-gray-200 sticky top-0 z-50 w-full">
 <nav class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
 <div class="flex items-center justify-between">
-    
-    <!-- 1. Logo and Brand (Nhóm bên trái) -->
+
     <div class="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
         <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gray-900 rounded flex items-center justify-center"><span class="text-white font-bold text-sm sm:text-lg">T</span>
         </div>
@@ -109,7 +111,6 @@ scroll-margin-top: 80px;
         </div>
     </div>
 
-    <!-- 2. Menu Content (Desktop) -->
     <div class="hidden sm:flex items-center space-x-4 md:space-x-6 xl:space-x-8 mx-12">
         <a class="nav-link active text-sm md:text-base text-gray-700 hover:text-orange-500" href="#home">Trang chủ</a>
         <a class="nav-link text-sm md:text-base text-gray-700 hover:text-orange-500" href="#about">Giới thiệu</a>
@@ -118,51 +119,41 @@ scroll-margin-top: 80px;
         <a class="nav-link text-sm md:text-base text-gray-700 hover:text-orange-500" href="#contact">Liên hệ</a>
     </div>
 
-    <!-- 3. Action Buttons (Nhóm bên phải) -->
-    <div class="flex items-center space-x-2 sm:space-x-0">
-        <!-- Search Button (Desktop) -->
-        <button class="hidden sm:flex p-2 hover:bg-gray-100 rounded-full transition-colors" onclick="toggleSearchModal()">
-        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-        </svg></button>
-
-        <!-- Cart Button (Desktop) -->
-        <button class="hidden sm:flex p-2 hover:bg-gray-100 rounded-full transition-colors relative sm:ml-3" onclick="toggleCart()">
-        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0h8m-8 0a2 2 0 100 4 2 2 0 000-4zm8 0a2 2 0 100 4 2 2 0 000-4z"></path>
-</svg><span id="cart-count" class="cart-count">0</span> </button>
-
-        <!-- Nút Đăng nhập (Desktop) -->
-        <button id="login-button" onclick="loginWithGoogle()" class="hidden sm:flex items-center simple-button-outline !px-4 !py-2 sm:ml-6">
-            <span>Đăng nhập</span>
+    <div class="flex items-center space-x-2 sm:space-x-3">
+        <button class="flex p-2 hover:bg-gray-100 rounded-full transition-colors" onclick="toggleSearchModal()">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
         </button>
-        <!-- Nút Hiển thị thông tin User (Desktop) -->
-        <div id="user-info" class="hidden items-center space-x-2 sm:ml-6">
-            <span id="user-name" class="text-sm font-medium"></span>
-            <button onclick="logout()" class="text-sm text-gray-500 hover:text-red-600">(Đăng xuất)</button>
-        </div>
 
-        <!-- Cart Button (Mobile) - Chỉ hiện trên mobile -->
-        <button class="sm:hidden flex p-2 hover:bg-gray-100 rounded-full transition-colors relative" onclick="toggleCart()">
+        <button class="flex p-2 hover:bg-gray-100 rounded-full transition-colors relative" onclick="toggleCart()">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0h8m-8 0a2 2 0 100 4 2 2 0 000-4zm8 0a2 2 0 100 4 2 2 0 000-4z"></path>
             </svg>
-            <span id="cart-count-mobile" class="cart-count">0</span>
+            <span id="cart-count" class="cart-count">0</span>
         </button>
-        <!-- Mobile menu button -->
-        <button class="sm:hidden flex p-2 hover:bg-gray-100 rounded-full transition-colors" onclick="toggleMobileMenu()">
+
+        <div class="hidden sm:flex items-center space-x-3 sm:ml-6">
+            <button id="login-button" onclick="loginWithGoogle()" class="items-center simple-button-outline !px-4 !py-2">
+                <span>Đăng nhập</span>
+            </button>
+            <div id="user-info" class="hidden items-center space-x-2">
+                <span id="user-name" class="text-sm font-medium"></span>
+                <button onclick="logout()" class="text-sm text-gray-500 hover:text-red-600">(Đăng xuất)</button>
+            </div>
+        </div>
+
+        <button class="sm:hidden flex p-2 hover:bg-gray-100 rounded-full transition-colors ml-1" onclick="toggleMobileMenu()">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
         </button>
     </div>
 
-</div><!-- Mobile menu -->
-<div id="mobile-menu" class="sm:hidden hidden mt-4 pb-4 border-t border-gray-200">
+</div><div id="mobile-menu" class="sm:hidden hidden mt-4 pb-4 border-t border-gray-200">
 <div class="flex flex-col space-y-3 pt-4"><a class="nav-link py-2 px-1 text-base" href="#home" onclick="toggleMobileMenu()">Trang chủ</a> <a class="nav-link py-2 px-1 text-base" href="#about" onclick="toggleMobileMenu()">Giới thiệu</a> <a class="nav-link py-2 px-1 text-base" href="#products" onclick="toggleMobileMenu()">Sản phẩm</a> <a class="nav-link py-2 px-1 text-base" href="#reviews" onclick="toggleMobileMenu()">Đánh giá</a> <a class="nav-link py-2 px-1 text-base" href="#contact" onclick="toggleMobileMenu()">Liên hệ</a>
-<!-- Mobile Search -->
 <div class="pt-3 border-t border-gray-200 mt-3">
 <button class="flex items-center space-x-2 py-2 px-1 text-gray-600 hover:text-purple-600 transition-colors" onclick="toggleSearchModal(); toggleMobileMenu();">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
 </svg><span>Tìm kiếm</span> </button>
 </div>
-<!-- Mobile Login -->
 <div class="pt-3 border-t border-gray-200 mt-3">
     <button id="mobile-login-button" onclick="loginWithGoogle(); toggleMobileMenu();" class="flex items-center space-x-2 py-2 px-1 text-gray-600 hover:text-purple-600 transition-colors">
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" height="1em" width="1em"><path d="M20.94 11.001c.08.64.12 1.29.12 1.96 0 5.9-4.8 10.7-10.7 10.7-5.92 0-10.72-4.8-10.72-10.7 0-5.9 4.8-10.7 10.7-10.7 3.08 0 5.8 1.3 7.7 3.3l-2.76 2.7c-1.12-.9-2.7-1.6-4.9-1.6-4.12 0-7.48 3.3-7.48 7.3s3.36 7.3 7.48 7.3c4.76 0 6.78-3.5 7.08-5.3h-7.1v-3.4h10.36z"></path></svg>
@@ -176,9 +167,7 @@ scroll-margin-top: 80px;
 </div>
 </div>
 </nav>
-</header><!-- Main Content -->
-<main class="flex-1"><!-- Section 1: Homepage -->
-<section id="home" class="relative py-20 px-6 bg-white">
+</header><main class="flex-1"><section id="home" class="relative py-20 px-6 bg-white">
 <div class="max-w-7xl mx-auto">
 <div class="grid lg:grid-cols-2 gap-12 items-center">
 <div class="space-y-8 text-center lg:text-left">
@@ -205,21 +194,68 @@ SINH VIÊN
 </div>
 </div>
 </div>
-</div><!-- Featured Products Preview -->
-<div class="max-w-7xl mx-auto mt-20">
+</div><div class="max-w-7xl mx-auto mt-20">
 <div class="text-center mb-16">
 <h3 class="text-4xl font-bold mb-4 text-gray-900">Sản phẩm nổi bật</h3>
 <p class="text-xl text-gray-600">Khám phá những hương thơm được yêu thích nhất</p>
 </div>
-<!-- (MỚI) Grid sản phẩm nổi bật sẽ được render bằng JS -->
-<div class="grid md:grid-cols-3 gap-8" id="featured-products-grid">
-    <!-- Các sản phẩm nổi bật sẽ được chèn vào đây bởi JavaScript -->
+<div class="grid md:grid-cols-3 gap-8">
+<div class="simple-card cursor-pointer p-6" onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})">
+<div class="relative mb-6 aspect-square bg-gray-50 rounded-lg flex items-center justify-center">
+<div class="perfume-bottle w-32 h-40">
+<div class="absolute top-2 left-1/2 transform -translate-x-1/2 w-4 h-6 bg-gray-400 rounded-t"></div>
+<div class="absolute top-8 left-1/2 transform -translate-x-1/2 w-16 h-24 bg-rose-300 rounded"></div>
+</div>
+<div class="absolute top-4 right-4 bg-gray-900 text-white px-2 py-1 rounded text-xs font-medium">
+Mới
+</div>
+</div>
+<div class="space-y-2">
+<h4 class="text-xl font-semibold text-gray-900">Hoa hồng thanh lịch</h4>
+<p class="text-gray-600">Sự pha trộn lãng mạn giữa hoa hồng Bulgaria và xạ hương trắng</p>
+<div class="text-2xl font-bold text-gray-900">
+2.200.000₫
+</div>
+</div>
+</div>
+<div class="simple-card cursor-pointer p-6" onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})">
+<div class="relative mb-6 aspect-square bg-gray-50 rounded-lg flex items-center justify-center">
+<div class="perfume-bottle w-32 h-40">
+<div class="absolute top-2 left-1/2 transform -translate-x-1/2 w-4 h-6 bg-gray-400 rounded-t"></div>
+<div class="absolute top-8 left-1/2 transform -translate-x-1/2 w-16 h-24 bg-blue-300 rounded"></div>
+</div>
+</div>
+<div class="space-y-2">
+<h4 class="text-xl font-semibold text-gray-900">Gió biển</h4>
+<p class="text-gray-600">Hương nước tươi mát với chút muối biển</p>
+<div class="text-2xl font-bold text-gray-900">
+1.850.000₫
+</div>
+</div>
+</div>
+<div class="simple-card cursor-pointer p-6" onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})">
+<div class="relative mb-6 aspect-square bg-gray-50 rounded-lg flex items-center justify-center">
+<div class="perfume-bottle w-32 h-40">
+<div class="absolute top-2 left-1/2 transform -translate-x-1/2 w-4 h-6 bg-gray-400 rounded-t"></div>
+<div class="absolute top-8 left-1/2 transform -translate-x-1/2 w-16 h-24 bg-amber-300 rounded"></div>
+</div>
+<div class="absolute top-4 right-4 bg-gray-900 text-white px-2 py-1 rounded text-xs font-medium">
+Giới hạn
+</div>
+</div>
+<div class="space-y-2">
+<h4 class="text-xl font-semibold text-gray-900">Hoàng hôn vàng</h4>
+<p class="text-gray-600">Hương vani ấm áp và gỗ đàn hương với nốt hương cam chanh</p>
+<div class="text-2xl font-bold text-gray-900">
+3.100.000₫
+</div>
+</div>
+</div>
 </div>
 <div class="text-center mt-12"><button class="simple-button" onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})">Xem tất cả sản phẩm</button>
 </div>
 </div>
-</section><!-- Section 2: About Us -->
-<section id="about" class="py-20 px-6 bg-gray-100">
+</section><section id="about" class="py-20 px-6 bg-gray-100">
 <div class="max-w-4xl mx-auto">
 <div class="text-center mb-16">
 <h2 class="text-4xl font-bold mb-6 text-gray-900">Về chúng tôi</h2>
@@ -264,35 +300,27 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 </section>
 
-<!-- Section 3: Products (ĐÃ SỬA) -->
 <section id="products" class="py-20 px-6 bg-white">
 <div class="max-w-7xl mx-auto">
 <div class="text-center mb-16">
 <h2 class="text-4xl font-bold mb-6 text-gray-900">Bộ sưu tập nước hoa</h2>
 <p class="text-xl text-gray-600">Khám phá những hương thơm tinh tế và sang trọng</p>
-</div><!-- Product Categories -->
-<div id="filter-buttons" class="flex flex-wrap justify-center gap-4 mb-12">
+</div><div id="filter-buttons" class="flex flex-wrap justify-center gap-4 mb-12">
     <button class="simple-button" onclick="filterProducts(this, 'all')">Tất cả</button>
     <button class="simple-button-outline" onclick="filterProducts(this, 'nam')">Nam</button>
     <button class="simple-button-outline" onclick="filterProducts(this, 'nu')">Nữ</button>
     <button class="simple-button-outline" onclick="filterProducts(this, 'unisex')">Unisex</button>
-</div>
-<!-- (MỚI) Grid sản phẩm chính sẽ được render bằng JS -->
-<div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="products-grid">
-    <!-- Các sản phẩm sẽ được chèn vào đây bởi JavaScript -->
-</div>
+</div><div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="products-grid">
+    </div>
 </div>
 </section>
 
-<!-- Section 4: Customer Reviews -->
 <section id="reviews" class="py-20 px-6 bg-white">
 <div class="max-w-6xl mx-auto">
 <div class="text-center mb-16">
 <h2 class="text-4xl font-bold mb-6 text-gray-900">Đánh giá khách hàng</h2>
 <p class="text-xl text-gray-600">Những chia sẻ chân thực từ khách hàng của chúng tôi</p>
-</div><!-- Reviews Grid -->
-<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"><!-- Review 1 -->
-<div class="bg-gray-50 rounded-2xl p-6 space-y-4">
+</div><div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"><div class="bg-gray-50 rounded-2xl p-6 space-y-4">
 <div class="flex items-center space-x-4">
 <div class="w-12 h-12 rounded-full overflow-hidden">
 <div class="w-full h-full bg-gradient-to-br from-pink-200 to-pink-300 flex items-center justify-center"><span class="text-lg">👩</span>
@@ -307,8 +335,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 <p class="text-gray-600 leading-relaxed">"Mình đã mua chai Hoa hồng thanh lịch và rất hài lòng. Hương thơm rất tinh tế, không quá nồng và giữ được mùi suốt cả ngày. Giá cả phù hợp với sinh viên như mình."</p>
 <p class="text-sm text-gray-500">Đã mua: Hoa hồng thanh lịch</p>
-</div><!-- Review 2 -->
-<div class="bg-gray-50 rounded-2xl p-6 space-y-4">
+</div><div class="bg-gray-50 rounded-2xl p-6 space-y-4">
 <div class="flex items-center space-x-4">
 <div class="w-12 h-12 rounded-full overflow-hidden">
 <div class="w-full h-full bg-gradient-to-br from-blue-200 to-blue-300 flex items-center justify-center"><span class="text-lg">👨</span>
@@ -323,8 +350,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 <p class="text-gray-600 leading-relaxed">"Shop tư vấn rất nhiệt tình, giúp mình chọn được chai Gió biển phù hợp. Mùi hương rất nam tính và tươi mát. Giao hàng nhanh, đóng gói cẩn thận."</p>
 <p class="text-sm text-gray-500">Đã mua: Gió biển</p>
-</div><!-- Review 3 -->
-<div class="bg-gray-50 rounded-2xl p-6 space-y-4">
+</div><div class="bg-gray-50 rounded-2xl p-6 space-y-4">
 <div class="flex items-center space-x-4">
 <div class="w-12 h-12 rounded-full overflow-hidden">
 <div class="w-full h-full bg-gradient-to-br from-green-200 to-green-300 flex items-center justify-center"><span class="text-lg">👩</span>
@@ -339,8 +365,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 <p class="text-gray-600 leading-relaxed">"Chai Tím lavender mình mua rất thích! Mùi hương thư giãn, rất phù hợp để dùng hàng ngày. Chất lượng tốt, giá cả hợp lý. Sẽ ủng hộ shop lâu dài."</p>
 <p class="text-sm text-gray-500">Đã mua: Tím lavender</p>
-</div><!-- Review 4 -->
-<div class="bg-gray-50 rounded-2xl p-6 space-y-4">
+</div><div class="bg-gray-50 rounded-2xl p-6 space-y-4">
 <div class="flex items-center space-x-4">
 <div class="w-12 h-12 rounded-full overflow-hidden">
 <div class="w-full h-full bg-gradient-to-br from-purple-200 to-purple-300 flex items-center justify-center"><span class="text-lg">👨</span>
@@ -355,8 +380,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 <p class="text-gray-600 leading-relaxed">"Lần đầu mua nước hoa online nhưng rất hài lòng với chất lượng. Chai Đêm sâu thẳm có mùi rất đặc biệt, rất thích hợp cho buổi tối. Chắc chắn sẽ quay lại."</p>
 <p class="text-sm text-gray-500">Đã mua: Đêm sâu thẳm</p>
-</div><!-- Review 5 -->
-<div class="bg-gray-50 rounded-2xl p-6 space-y-4">
+</div><div class="bg-gray-50 rounded-2xl p-6 space-y-4">
 <div class="flex items-center space-x-4">
 <div class="w-12 h-12 rounded-full overflow-hidden">
 <div class="w-full h-full bg-gradient-to-br from-yellow-200 to-yellow-300 flex items-center justify-center"><span class="text-lg">👩</span>
@@ -371,8 +395,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 <p class="text-gray-600 leading-relaxed">"Shop có nhiều loại nước hoa đa dạng, mình đã thử Hoàng hôn vàng và rất ưng ý. Mùi hương vừa ngọt vừa ấm, rất phù hợp với cá tính của mình."</p>
 <p class="text-sm text-gray-500">Đã mua: Hoàng hôn vàng</p>
-</div><!-- Review 6 -->
-<div class="bg-gray-50 rounded-2xl p-6 space-y-4">
+</div><div class="bg-gray-50 rounded-2xl p-6 space-y-4">
 <div class="flex items-center space-x-4">
 <div class="w-12 h-12 rounded-full overflow-hidden">
 <div class="w-full h-full bg-gradient-to-br from-red-200 to-red-300 flex items-center justify-center"><span class="text-lg">👨</span>
@@ -388,8 +411,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 <p class="text-gray-600 leading-relaxed">"Dịch vụ khách hàng rất tốt, shop luôn sẵn sàng tư vấn và giải đáp thắc mắc. Sản phẩm chất lượng, đóng gói đẹp. Rất recommend cho các bạn sinh viên."</p>
 <p class="text-sm text-gray-500">Đã mua: Rừng xanh</p>
 </div>
-</div><!-- Newsletter Signup -->
-<div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-3xl p-8 lg:p-12 text-center">
+</div><div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-3xl p-8 lg:p-12 text-center">
 <h3 class="text-3xl font-bold text-gray-900 mb-4">Đăng ký nhận tin</h3>
 <p class="text-lg text-gray-600 mb-8">Nhận thông báo về sản phẩm mới và ưu đãi đặc biệt</p>
 <form class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto" onsubmit="handleNewsletter(event)"><input type="email" placeholder="Nhập email của bạn" class="flex-1 px-6 py-4 rounded-full border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors" required> <button type="submit" class="px-8 py-4 bg-purple-600 text-white rounded-full font-semibold hover:bg-purple-700 transition-colors">Đăng ký</button>
@@ -397,15 +419,13 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 <div id="newsletter-message" class="text-sm text-gray-600 mt-4"></div>
 </div>
 </div>
-</section><!-- Section 5: Contact -->
-<section id="contact" class="py-20 px-6 bg-gray-100">
+</section><section id="contact" class="py-20 px-6 bg-gray-100">
 <div class="max-w-4xl mx-auto">
 <div class="text-center mb-16">
 <h2 class="text-4xl font-bold mb-6 text-gray-900">Liên hệ với chúng tôi</h2>
 <p class="text-xl text-gray-600">Chúng tôi luôn sẵn sàng hỗ trợ bạn</p>
 </div>
-<div class="grid lg:grid-cols-2 gap-12"><!-- Contact Info -->
-<div class="space-y-8">
+<div class="grid lg:grid-cols-2 gap-12"><div class="space-y-8">
 <div>
 <h3 class="text-2xl font-bold text-gray-900 mb-6">Thông tin liên hệ</h3>
 <div class="space-y-4">
@@ -442,14 +462,12 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 </div>
 </div>
-</div><!-- Social Media -->
-<div>
+</div><div>
 <h4 class="text-lg font-semibold text-gray-900 mb-4">Theo dõi chúng tôi</h4>
-<div class="flex space-x-4"><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors"> <span class="text-lg">📘</span> </a> <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-pink-600 text-white rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors"> <span class="text-lg">📷</span> </a> <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-red-600 text-white rounded-full flex items-center justify-center hover:bg-red-700 transition-colors"> <span class="text-lg">📺</span> </a> <a href="https://zalo.me" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors"> <span class="text-lg">💬</span> </a>
+<div class="flex space-x-4"><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors"> <span class="text-lg">📘</span> </a> <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-pink-600 text-white rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors"> <span class="text-lg">📷</span> </a> <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-red-600 text-white rounded-full flex items-center justify-center hover:bg-red-700 transition-colors"> <span class="text-lg">📺</span> </a> <a href="https://zalo.me" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors"> <span class="text-lg">💬</span> </a>
 </div>
 </div>
-</div><!-- Contact Form -->
-<div class="bg-white rounded-2xl p-8">
+</div><div class="bg-white rounded-2xl p-8">
 <h3 class="text-2xl font-bold text-gray-900 mb-6">Gửi tin nhắn</h3>
 <form class="space-y-6" onsubmit="handleContactForm(event)">
 <div><label for="name" class="block text-sm font-semibold text-gray-900 mb-2">Họ và tên</label> <input type="text" id="name" name="name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" required>
@@ -468,11 +486,9 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 </div>
 </section>
-</main><!-- Footer -->
-<footer class="bg-gray-900 text-white py-12 px-6">
+</main><footer class="bg-gray-900 text-white py-12 px-6">
 <div class="max-w-7xl mx-auto">
-<div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8"><!-- Company Info -->
-<div class="col-span-2 md:col-span-1 space-y-4">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8"><div class="col-span-2 md:col-span-1 space-y-4">
 <div class="flex items-center space-x-3">
 <div class="w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center"><span class="text-white font-bold text-lg">T</span>
 </div>
@@ -482,8 +498,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 </div>
 <p class="text-gray-400 text-sm leading-relaxed">Nước hoa cao cấp dành cho những người sành điệu với giá cả phù hợp sinh viên.</p>
-</div><!-- Quick Links -->
-<div class="space-y-4">
+</div><div class="space-y-4">
 <h4 class="font-semibold text-lg">Liên kết nhanh</h4>
 <div class="space-y-2 text-sm">
 <div>
@@ -499,8 +514,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 <a href="#reviews" class="text-gray-400 hover:text-white transition-colors">Đánh giá</a>
 </div>
 </div>
-</div><!-- Policies -->
-<div class="space-y-4">
+</div><div class="space-y-4">
 <h4 class="font-semibold text-lg">Chính sách</h4>
 <div class="space-y-2 text-sm">
 <div>
@@ -516,8 +530,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 <a href="#" class="text-gray-400 hover:text-white transition-colors" onclick="showPolicy('terms')">Điều khoản sử dụng</a>
 </div>
 </div>
-</div><!-- Customer Support -->
-<div class="space-y-4">
+</div><div class="space-y-4">
 <h4 class="font-semibold text-lg">Hỗ trợ khách hàng</h4>
 <div class="space-y-2 text-sm text-gray-400">
 <div>
@@ -533,12 +546,10 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 </div>
 </div>
-</div><!-- Bottom Footer -->
-<div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+</div><div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
 <div class="text-sm text-gray-400">
 © 2024 Tạp hóa sinh viên. Được tạo ra với tình yêu dành cho những hương thơm đặc biệt.
-</div><!-- Bocongthuong Badge -->
-<div class="flex items-center space-x-4">
+</div><div class="flex items-center space-x-4">
 <div class="bg-white rounded-lg p-2">
 <div class="w-16 h-12 bg-gradient-to-r from-red-500 to-yellow-500 rounded flex items-center justify-center"><span class="text-white text-xs font-bold">BCT</span>
 </div>
@@ -555,7 +566,6 @@ Bộ Công Thương
 </div>
 </div>
 </footer>
-<!-- Shopping Cart Modal (ĐÃ SỬA) -->
 <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col">
@@ -566,21 +576,17 @@ Bộ Công Thương
                         </svg></button>
                 </div>
             </div>
-            <!-- (MỚI) Thêm space-y-4 để các item có khoảng cách -->
             <div id="cart-items" class="p-6 flex-1 overflow-y-auto space-y-4">
                 <p class="text-gray-500 text-center">Giỏ hàng trống</p>
             </div>
             <div class="p-6 border-t bg-gray-50 flex-shrink-0">
                 <div class="flex items-center justify-between mb-4"><span class="font-semibold">Tổng cộng:</span> <span id="cart-total" class="font-bold text-xl text-purple-600">0₫</span>
-                </div>
-                <!-- (MỚI) Thêm ID cho nút thanh toán -->
-                <button id="checkout-button" class="w-full px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors" onclick="checkout()">Thanh toán</button>
+                </div><button class="w-full px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors" onclick="checkout()">Thanh toán</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Search Modal -->
 <div id="search-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
 <div class="flex items-center justify-center min-h-screen p-4">
 <div class="bg-white rounded-2xl max-w-md w-full max-h-[80vh] overflow-hidden flex flex-col">
@@ -620,14 +626,14 @@ font_family: "Inter",
 font_size: 16
 };
 
-// *** (MỚI) DATA SẢN PHẨM ***
+// *** DATA: Dữ liệu sản phẩm (Dễ dàng chỉnh sửa và thêm mới) ***
 const productsData = [
   {
     name: "Hoa hồng thanh lịch",
     price: 2200000,
     category: "nu",
-    desc: "Sự pha trộn lãng mạn giữa hoa hồng Bulgaria và xạ hương trắng.",
-    image: "https://placehold.co/400x400/fecdd3/b11d59?text=Rose",
+    desc: "Sự pha trộn lãng mạn giữa hoa hồng Bulgaria và xạ hương trắng, tạo nên hương thơm quyến rũ và tinh tế.",
+    image: "assets/images/perfume-rose.png",
     tag: "Mới",
     color: "rose"
   },
@@ -635,8 +641,8 @@ const productsData = [
     name: "Gió biển",
     price: 1850000,
     category: "nam",
-    desc: "Hương nước tươi mát với chút muối biển, mang lại cảm giác tự do.",
-    image: "https://placehold.co/400x400/bae6fd/0c4a6e?text=Ocean",
+    desc: "Hương nước tươi mát với chút muối biển, mang lại cảm giác tự do và năng động cho phái mạnh.",
+    image: "assets/images/perfume-ocean.png",
     tag: "Nam",
     color: "blue"
   },
@@ -644,8 +650,8 @@ const productsData = [
     name: "Hoàng hôn vàng",
     price: 3100000,
     category: "unisex",
-    desc: "Hương vani ấm áp và gỗ đàn hương với nốt hương cam chanh.",
-    image: "https://placehold.co/400x400/fed7aa/9a3412?text=Amber",
+    desc: "Hương vani ấm áp và gỗ đàn hương với nốt hương cam chanh, phù hợp cho cả nam và nữ.",
+    image: "assets/images/perfume-amber.png",
     tag: "Giới hạn",
     color: "amber"
   },
@@ -653,8 +659,8 @@ const productsData = [
     name: "Rừng xanh",
     price: 1950000,
     category: "nu",
-    desc: "Hương thơm tươi mát của lá cây và hoa nhài, gần gũi thiên nhiên.",
-    image: "https://placehold.co/400x400/bbf7d0/15803d?text=Forest",
+    desc: "Hương thơm tươi mát của lá cây và hoa nhài, mang lại cảm giác gần gũi với thiên nhiên.",
+    image: "assets/images/perfume-green.png",
     tag: "Nữ",
     color: "green"
   },
@@ -662,8 +668,8 @@ const productsData = [
     name: "Đêm sâu thẳm",
     price: 2750000,
     category: "nam",
-    desc: "Hương thơm mạnh mẽ với gỗ cedar và hổ phách, thể hiện sự nam tính.",
-    image: "https://placehold.co/400x400/c7d2fe/3730a3?text=Night",
+    desc: "Hương thơm mạnh mẽ với gỗ cedar và hổ phách, thể hiện sự nam tính và bí ẩn.",
+    image: "assets/images/perfume-deep.png",
     tag: "Nam",
     color: "indigo"
   },
@@ -671,8 +677,8 @@ const productsData = [
     name: "Tím lavender",
     price: 1650000,
     category: "unisex",
-    desc: "Hương lavender thư giãn kết hợp với bergamot tươi mát.",
-    image: "https://placehold.co/400x400/e9d5ff/7e22ce?text=Lavender",
+    desc: "Hương lavender thư giãn kết hợp với bergamot tươi mát, mang lại cảm giác bình yên.",
+    image: "assets/images/perfume-lavender.png",
     tag: "Bán chạy",
     color: "purple"
   }
@@ -688,16 +694,18 @@ const mobileMenu = document.getElementById('mobile-menu');
 mobileMenu.classList.toggle('hidden');
 }
 
-// *** (MỚI) LOGIC RENDERING VÀ LỌC SẢN PHẨM ***
+// *** LOGIC RENDERING VÀ LỌC SẢN PHẨM ***
 
 function renderProductCard(product) {
     // Hàm này tạo ra HTML cho một sản phẩm từ mảng data
     return `
         <div class="group cursor-pointer bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 product-card" data-category="${product.category}" data-name="${product.name.toLowerCase()}">
             <div class="relative overflow-hidden rounded-t-2xl aspect-square bg-gradient-to-br from-${product.color}-100 to-${product.color}-200">
-                <div class="w-full h-full flex items-center justify-center group-hover:scale-105 transition-transform duration-300 p-4">
-                    <!-- Sử dụng ảnh placeholder từ data -->
-                    <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain rounded-lg">
+                <div class="w-full h-full flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                    <div class="perfume-bottle w-32 h-40 shimmer">
+                        <div class="absolute top-2 left-1/2 transform -translate-x-1/2 w-4 h-6 bg-gradient-to-b from-gray-300 to-gray-400 rounded-t"></div>
+                        <div class="absolute top-8 left-1/2 transform -translate-x-1/2 w-16 h-24 bg-gradient-to-b from-${product.color}-300 to-${product.color}-500 rounded opacity-80"></div>
+                    </div>
                 </div>
                 ${product.tag ? `<div class="absolute top-4 right-4 bg-gray-900 text-white px-2 py-1 rounded-full text-xs font-semibold">${product.tag}</div>` : ''}
                 <div class="absolute top-4 left-4 bg-${product.category === 'nam' ? 'blue' : product.category === 'nu' ? 'pink' : 'green'}-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
@@ -706,12 +714,11 @@ function renderProductCard(product) {
             </div>
             <div class="p-6 space-y-3">
                 <h4 class="text-xl font-semibold text-gray-900">${product.name}</h4>
-                <p class="text-gray-600 text-sm h-10">${product.desc}</p> <!-- Đặt chiều cao cố định cho mô tả -->
-                <div class="flex items-center justify-between pt-2">
+                <p class="text-gray-600 text-sm">${product.desc}</p>
+                <div class="flex items-center justify-between">
                     <span class="text-2xl font-bold text-purple-600">
                         ${formatPrice(product.price)}
                     </span> 
-                    <!-- Thêm data-image để giỏ hàng lấy ảnh -->
                     <button class="px-4 py-2 bg-purple-600 text-white rounded-full text-sm font-semibold hover:bg-purple-700 transition-colors" onclick="addToCart('${product.name}', ${product.price}, this)" data-image="${product.image}">Thêm vào giỏ</button>
                 </div>
             </div>
@@ -719,8 +726,8 @@ function renderProductCard(product) {
     `;
 }
 
-function renderProducts(productsToRender, gridId) {
-    const grid = document.getElementById(gridId);
+function renderProducts(productsToRender) {
+    const grid = document.getElementById('products-grid');
     if (grid) {
         grid.innerHTML = productsToRender.map(renderProductCard).join('');
     }
@@ -739,20 +746,22 @@ function filterProducts(btnElement, category) {
 
   // 2. Lọc sản phẩm và render lại
   const filtered = productsData.filter(p => category === 'all' || p.category === category);
-  renderProducts(filtered, 'products-grid'); // Render vào grid chính
+  renderProducts(filtered);
 }
 
 
-// *** (MỚI) CÁC HÀM QUẢN LÝ GIỎ HÀNG (ĐÃ NÂNG CẤP) ***
+// *** CÁC HÀM QUẢN LÝ GIỎ HÀNG ĐÃ ĐƯỢC NÂNG CẤP ***
 
+// Hàm mới: Thêm sản phẩm vào giỏ hàng (kiểm tra trùng lặp)
 function addToCart(productName, price, buttonElement) {
+    // Lấy image source từ data-image của nút
     const imageSrc = buttonElement.getAttribute('data-image') || '❓'; 
 
     const existingItem = cart.find(item => item.name === productName);
 
     if (existingItem) {
         existingItem.quantity += 1;
-        existingItem.subtotal = existingItem.price * existingItem.quantity;
+        existingItem.subtotal += price;
     } else {
         cart.push({
             name: productName,
@@ -768,6 +777,7 @@ function addToCart(productName, price, buttonElement) {
     showNotification(`Đã thêm 1 x "${productName}" vào giỏ hàng!`);
 }
 
+// Hàm mới: Điều chỉnh số lượng (Cộng/Trừ)
 function setQuantity(productName, delta) {
     const itemIndex = cart.findIndex(item => item.name === productName);
     
@@ -783,11 +793,13 @@ function setQuantity(productName, delta) {
             cart.splice(itemIndex, 1);
         }
         
+        // Tính lại tổng tiền
         cartTotal = cart.reduce((total, item) => total + item.subtotal, 0);
         updateCartDisplay();
     }
 }
 
+// Hàm mới: Xóa toàn bộ sản phẩm khỏi giỏ hàng
 function deleteItem(productName) {
     const itemIndex = cart.findIndex(item => item.name === productName);
     
@@ -798,15 +810,15 @@ function deleteItem(productName) {
     }
 }
 
+// Hàm hiển thị giỏ hàng (ĐÃ SỬA: Hiển thị ảnh, số lượng, và cộng/trừ)
 function updateCartDisplay() {
     const cartCount = document.getElementById('cart-count');
-    const cartCountMobile = document.getElementById('cart-count-mobile'); 
     const cartItems = document.getElementById('cart-items');
     const cartTotalEl = document.getElementById('cart-total');
 
+    // Cập nhật số lượng tổng
     const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
     cartCount.textContent = totalItems;
-    cartCountMobile.textContent = totalItems;
 
     cartTotalEl.textContent = formatPrice(cartTotal);
 
@@ -816,7 +828,9 @@ function updateCartDisplay() {
         cartItems.innerHTML = cart.map(item => `
             <div class="flex items-center p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
                 <div class="w-16 h-16 bg-gray-100 rounded-md flex items-center justify-center mr-4 flex-shrink-0">
-                    <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain rounded-md">
+                    ${item.image.includes('/') 
+                        ? `<img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover rounded-md">`
+                        : `<span class="text-3xl">${item.image || '❓'}</span>`} 
                 </div>
                 
                 <div class="flex-1 min-w-0">
@@ -846,59 +860,18 @@ function toggleCart() {
 const cartModal = document.getElementById('cart-modal');
 cartModal.classList.toggle('hidden');
 }
-
-// *** (MỚI) HÀM CHECKOUT ĐÃ SỬA: LƯU ĐƠN HÀNG VÀO FIRESTORE ***
-async function checkout() {
-    if (cart.length === 0) {
-        showNotification('Giỏ hàng trống!', 'red');
-        return;
-    }
-
-    const user = auth.currentUser;
-    if (!user) {
-        showNotification('Vui lòng Đăng nhập để đặt hàng!', 'red');
-        loginWithGoogle(); // Yêu cầu đăng nhập
-        return;
-    }
-
-    // Vô hiệu hóa nút để tránh nhấp đúp
-    const checkoutButton = document.getElementById('checkout-button');
-    checkoutButton.disabled = true;
-    checkoutButton.textContent = 'Đang xử lý...';
-
-    // Chuẩn bị dữ liệu đơn hàng
-    const orderData = {
-        userId: user.uid,
-        userName: user.displayName,
-        userEmail: user.email,
-        total: cartTotal,
-        items: cart, // Giỏ hàng đã có đủ thông tin
-        date: new Date(), // <<< SỬA LỖI: Dùng new Date() thay vì serverTimestamp()
-        status: 'Pending'
-    };
-
-    try {
-        // Lưu vào Firestore
-        const docRef = await db.collection('orders').add(orderData);
-        
-        showNotification(`Đặt hàng thành công! Mã đơn: ${docRef.id.substring(0, 5)}`, 'green');
-        
-        // Xóa giỏ hàng
-        cart = [];
-        cartTotal = 0;
-        updateCartDisplay();
-        toggleCart();
-        
-    } catch (error) {
-        console.error("Lỗi khi lưu đơn hàng vào Firestore: ", error);
-        showNotification('Lỗi đặt hàng! Vui lòng thử lại.', 'red');
-    } finally {
-        // Kích hoạt lại nút
-        checkoutButton.disabled = false;
-        checkoutButton.textContent = 'Thanh toán';
-    }
+function checkout() {
+if (cart.length === 0) {
+showNotification('Giỏ hàng trống!');
+return;
 }
 
+showNotification(`Cảm ơn bạn! Đơn hàng ${formatPrice(cartTotal)} đã được ghi nhận.`);
+cart = [];
+cartTotal = 0;
+updateCartDisplay();
+toggleCart();
+}
 function formatPrice(price) {
 return new Intl.NumberFormat('vi-VN', {
 style: 'currency',
@@ -906,15 +879,7 @@ currency: 'VND'
 }).format(price);
 }
 
-// *** (MỚI) MÃ JAVASCRIPT TÌM KIẾM (ĐÃ THÊM LẠI) ***
-function toggleSearchModal() {
-  const searchModal = document.getElementById('search-modal');
-  searchModal.classList.toggle('hidden');
-  if (!searchModal.classList.contains('hidden')) {
-    document.getElementById('search-input').focus();
-  }
-}
-
+// *** MÃ JAVASCRIPT TÌM KIẾM ***
 function performSearch() {
   const searchTerm = document.getElementById('search-input').value.toLowerCase();
   const resultsContainer = document.getElementById('search-results');
@@ -936,15 +901,19 @@ function performSearch() {
   }
   
   searchResults.forEach(product => {
-      const productHtml = renderProductCard(product); 
+      // Dùng renderProductCard để tạo HTML
+      const productHtml = renderProductCard(product);
       
+      // Tạo div để chèn HTML (vì productClone không dùng được ở đây)
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = productHtml;
       const productElement = tempDiv.firstChild;
       
+      // Thêm sự kiện click cho kết quả tìm kiếm
       productElement.addEventListener('click', () => {
           toggleSearchModal();
           document.getElementById('products').scrollIntoView({behavior: 'smooth'});
+          // Reset bộ lọc danh mục về "Tất cả"
           filterProducts(document.querySelector('#filter-buttons button'), 'all');
       });
 
@@ -991,26 +960,18 @@ terms: 'Điều khoản sử dụng: Vui lòng đọc kỹ trước khi sử d�
 
 showNotification(policies[policyType] || 'Thông tin chính sách');
 }
+// Notification system
+function showNotification(message) {
+const notification = document.createElement('div');
+notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+notification.textContent = message;
 
-// (MỚI) HÀM THÔNG BÁO ĐÃ SỬA (Hỗ trợ màu sắc và fade)
-function showNotification(message, color = 'green') {
-    const notification = document.createElement('div');
-    const colorClass = color === 'red' ? 'bg-red-500' : 'bg-green-500';
-    notification.className = `fixed top-4 right-4 ${colorClass} text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity duration-300 opacity-0`;
-    notification.textContent = message;
+document.body.appendChild(notification);
 
-    document.body.appendChild(notification);
-    
-    // Fade in
-    setTimeout(() => notification.classList.remove('opacity-0'), 10); 
-
-    // Fade out
-    setTimeout(() => {
-        notification.classList.add('opacity-0');
-        setTimeout(() => notification.remove(), 300); // Xóa sau khi fade out
-    }, 3000); // Hiển thị trong 3 giây
+setTimeout(() => {
+notification.remove();
+}, 3000);
 }
-
 // Navigation highlighting
 function updateActiveNavLink() {
 const sections = document.querySelectorAll('section[id]');
@@ -1171,21 +1132,15 @@ mapToCapabilities,
 mapToEditPanelValues
 });
 }
-
-// (MỚI) Tải sản phẩm khi trang được tải
-window.onload = function() {
-    renderProducts(productsData.slice(0, 3), 'featured-products-grid'); // 3 sản phẩm nổi bật
-    renderProducts(productsData, 'products-grid'); // Tất cả sản phẩm
-    updateCartDisplay();
-    window.addEventListener('scroll', updateActiveNavLink);
-    updateActiveNavLink(); // Initial call
-};
+// Initialize cart display and scroll listener
+updateCartDisplay();
+window.addEventListener('scroll', updateActiveNavLink);
+updateActiveNavLink(); // Initial call
+renderProducts(productsData); // <<< TỰ ĐỘNG HIỂN THỊ SẢN PHẨM KHI TẢI TRANG
 </script>
 
-<!-- (MỚI) SDK CỦA FIREBASE (ĐÃ THÊM FIRESTORE) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
   // *** ĐÂY LÀ MÃ CẤU HÌNH CỦA BẠN (firebaseConfig) ***
@@ -1199,11 +1154,10 @@ window.onload = function() {
     measurementId: "G-4PDW6ZGK90"
   };
 
-  // (MỚI) Khởi tạo Firebase và các dịch vụ
+  // Khởi tạo Firebase
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const provider = new firebase.auth.GoogleAuthProvider();
-  const db = firebase.firestore(); // <<< KHỞI TẠO DATABASE
 
   // *** LOGIC ĐĂNG NHẬP / ĐĂNG KÝ ***
 
@@ -1211,14 +1165,16 @@ window.onload = function() {
   function loginWithGoogle() {
     auth.signInWithPopup(provider)
       .then((result) => {
+        // Đăng nhập thành công.
         const user = result.user;
         console.log("Đăng nhập thành công:", user);
         showNotification(`Chào mừng ${user.displayName}!`);
-        toggleMobileMenu(); 
+        toggleMobileMenu(); // Tự động đóng menu mobile nếu đang mở
       })
       .catch((error) => {
+        // Xử lý lỗi
         console.error("Lỗi đăng nhập:", error);
-        showNotification("Đăng nhập thất bại: " + error.message, 'red');
+        showNotification("Đăng nhập thất bại: " + error.message);
       });
   }
 
@@ -1231,30 +1187,32 @@ window.onload = function() {
     });
   }
 
-  // 3. Hàm quan trọng: Theo dõi trạng thái đăng nhập
+  // 3. Hàm quan trọng: Theo dõi trạng thái đăng nhập (ĐÃ SỬA, KHÔNG DÙNG AVATAR)
   auth.onAuthStateChanged((user) => {
+    // Lấy các element cho cả desktop và mobile
     const loginButton = document.getElementById('login-button');
     const userInfoDiv = document.getElementById('user-info');
     const mobileLoginButton = document.getElementById('mobile-login-button');
     const mobileUserInfoDiv = document.getElementById('mobile-user-info');
 
     if (user) {
-      // Đã đăng nhập
+      // Nếu người dùng ĐÃ đăng nhập
       loginButton.classList.add('hidden');
       userInfoDiv.classList.remove('hidden');
-      userInfoDiv.classList.add('flex');
+      userInfoDiv.classList.add('flex'); // (MỚI) Đảm bảo user info hiển thị dạng flex
       mobileLoginButton.classList.add('hidden');
       mobileUserInfoDiv.classList.remove('hidden');
-      mobileUserInfoDiv.classList.add('flex');
-      
+      mobileUserInfoDiv.classList.add('flex'); // (MỚI) Đảm bảo user info hiển thị dạng flex
+
+      // Cập nhật thông tin cho cả desktop
       document.getElementById('user-name').textContent = user.displayName;
+      // Cập nhật thông tin cho cả mobile
       document.getElementById('mobile-user-name').textContent = user.displayName;
 
     } else {
-      // Chưa đăng nhập
+      // Nếu người dùng CHƯA đăng nhập
       loginButton.classList.remove('hidden');
-      loginButton.classList.add('flex');
-
+      loginButton.classList.add('flex'); // (MỚI) Đảm bảo nút login hiển thị dạng flex
       userInfoDiv.classList.add('hidden');
       userInfoDiv.classList.remove('flex');
       mobileLoginButton.classList.remove('hidden');
@@ -1267,4 +1225,3 @@ window.onload = function() {
 
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9967da13e3755c30',t:'MTc2MTc5NTIxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
