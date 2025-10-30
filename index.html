@@ -84,7 +84,7 @@ justify-content: center;
 font-size: 12px;
 position: absolute;
 top: -8px;
-right: 8px; 
+right: 8px; /* Đã sửa 8px */
 }
 section {
 scroll-margin-top: 80px;
@@ -873,7 +873,7 @@ async function checkout() {
         userEmail: user.email,
         total: cartTotal,
         items: cart, // Giỏ hàng đã có đủ thông tin
-        date: firebase.firestore.FieldValue.serverTimestamp(), 
+        date: new Date(), // <<< SỬA LỖI: Dùng new Date() thay vì serverTimestamp()
         status: 'Pending'
     };
 
@@ -906,7 +906,15 @@ currency: 'VND'
 }).format(price);
 }
 
-// *** MÃ JAVASCRIPT TÌM KIẾM ***
+// *** (MỚI) MÃ JAVASCRIPT TÌM KIẾM (ĐÃ THÊM LẠI) ***
+function toggleSearchModal() {
+  const searchModal = document.getElementById('search-modal');
+  searchModal.classList.toggle('hidden');
+  if (!searchModal.classList.contains('hidden')) {
+    document.getElementById('search-input').focus();
+  }
+}
+
 function performSearch() {
   const searchTerm = document.getElementById('search-input').value.toLowerCase();
   const resultsContainer = document.getElementById('search-results');
@@ -917,7 +925,6 @@ function performSearch() {
       return;
   }
   
-  // (MỚI) Tìm kiếm trong productsData
   const searchResults = productsData.filter(product => 
       product.name.toLowerCase().includes(searchTerm) || 
       product.desc.toLowerCase().includes(searchTerm)
@@ -929,7 +936,7 @@ function performSearch() {
   }
   
   searchResults.forEach(product => {
-      const productHtml = renderProductCard(product); // Dùng lại hàm render
+      const productHtml = renderProductCard(product); 
       
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = productHtml;
@@ -1164,6 +1171,7 @@ mapToCapabilities,
 mapToEditPanelValues
 });
 }
+
 // (MỚI) Tải sản phẩm khi trang được tải
 window.onload = function() {
     renderProducts(productsData.slice(0, 3), 'featured-products-grid'); // 3 sản phẩm nổi bật
