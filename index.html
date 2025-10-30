@@ -84,7 +84,7 @@ justify-content: center;
 font-size: 12px;
 position: absolute;
 top: -5px;
-right: 15px; /* ĐÃ SỬA: Dịch qua trái 8px */
+right: -1px; /* ĐÃ CHỈNH SỬA: Đặt sát góc trên bên phải của icon, giúp responsive tốt */
 }
 section {
 scroll-margin-top: 80px;
@@ -94,12 +94,10 @@ scroll-margin-top: 80px;
 <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
 </head>
 <body class="min-h-full bg-white text-gray-900">
-<div class="min-h-full flex flex-col"><!-- Header (ĐÃ SỬA LẠI BỐ CỤC) -->
-<header class="bg-white border-b border-gray-200 sticky top-0 z-50 w-full">
+<div class="min-h-full flex flex-col"><header class="bg-white border-b border-gray-200 sticky top-0 z-50 w-full">
 <nav class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
 <div class="flex items-center justify-between">
 
-    <!-- 1. Logo and Brand (Nhóm bên trái) -->
     <div class="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
         <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gray-900 rounded flex items-center justify-center"><span class="text-white font-bold text-sm sm:text-lg">T</span>
         </div>
@@ -109,7 +107,6 @@ scroll-margin-top: 80px;
         </div>
     </div>
 
-    <!-- 2. Menu Content (Desktop) - (ĐÃ KHÔI PHỤC VÀ THÊM KHOẢNG CÁCH) -->
     <div class="hidden sm:flex items-center space-x-4 md:space-x-6 xl:space-x-8 mx-12">
         <a class="nav-link active text-sm md:text-base text-gray-700 hover:text-orange-500" href="#home">Trang chủ</a>
         <a class="nav-link text-sm md:text-base text-gray-700 hover:text-orange-500" href="#about">Giới thiệu</a>
@@ -118,51 +115,41 @@ scroll-margin-top: 80px;
         <a class="nav-link text-sm md:text-base text-gray-700 hover:text-orange-500" href="#contact">Liên hệ</a>
     </div>
 
-    <!-- 3. Action Buttons (Nhóm bên phải) - ĐÃ SỬA LẠI SPACING VÀ THỨ TỰ -->
-    <div class="flex items-center space-x-2 sm:space-x-0">
-        <!-- Search Button (Desktop) - ĐÃ SỬA LẠI THỨ TỰ -->
-        <button class="hidden sm:flex p-2 hover:bg-gray-100 rounded-full transition-colors" onclick="toggleSearchModal()">
-        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-        </svg></button>
-
-        <!-- Cart Button (Desktop) - ĐÃ SỬA LẠI THỨ TỰ VÀ THÊM LỀ -->
-        <button class="hidden sm:flex p-2 hover:bg-gray-100 rounded-full transition-colors relative" onclick="toggleCart()">
-        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0h8m-8 0a2 2 0 100 4 2 2 0 000-4zm8 0a2 2 0 100 4 2 2 0 000-4z"></path>
-</svg><span id="cart-count" class="cart-count">0</span> </button>
-
-        <!-- Nút Đăng nhập (Desktop) - ĐÃ SỬA KHOẢNG CÁCH VÀ BỎ ICON -->
-        <button id="login-button" onclick="loginWithGoogle()" class="hidden sm:flex items-center simple-button-outline !px-4 !py-2 sm:ml-6">
-            <span>Đăng nhập</span>
+    <div class="flex items-center space-x-2 sm:space-x-3">
+        <button class="flex p-2 hover:bg-gray-100 rounded-full transition-colors" onclick="toggleSearchModal()">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
         </button>
-        <!-- Nút Hiển thị thông tin User (Desktop) -->
-        <div id="user-info" class="hidden items-center space-x-2 sm:ml-6">
-            <span id="user-name" class="text-sm font-medium"></span>
-            <button onclick="logout()" class="text-sm text-gray-500 hover:text-red-600">(Đăng xuất)</button>
-        </div>
 
-        <!-- Cart Button (Mobile) - Chỉ hiện trên mobile -->
-        <button class="sm:hidden flex p-2 hover:bg-gray-100 rounded-full transition-colors relative" onclick="toggleCart()">
+        <button class="flex p-2 hover:bg-gray-100 rounded-full transition-colors relative" onclick="toggleCart()">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0h8m-8 0a2 2 0 100 4 2 2 0 000-4zm8 0a2 2 0 100 4 2 2 0 000-4z"></path>
             </svg>
-            <span id="cart-count-mobile" class="cart-count">0</span>
+            <span id="cart-count" class="cart-count">0</span>
         </button>
-        <!-- Mobile menu button -->
-        <button class="sm:hidden flex p-2 hover:bg-gray-100 rounded-full transition-colors" onclick="toggleMobileMenu()">
+
+        <div class="hidden sm:flex items-center space-x-3 sm:ml-6">
+            <button id="login-button" onclick="loginWithGoogle()" class="items-center simple-button-outline !px-4 !py-2">
+                <span>Đăng nhập</span>
+            </button>
+            <div id="user-info" class="hidden items-center space-x-2">
+                <span id="user-name" class="text-sm font-medium"></span>
+                <button onclick="logout()" class="text-sm text-gray-500 hover:text-red-600">(Đăng xuất)</button>
+            </div>
+        </div>
+
+        <button class="sm:hidden flex p-2 hover:bg-gray-100 rounded-full transition-colors ml-1" onclick="toggleMobileMenu()">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
         </button>
     </div>
 
-</div><!-- Mobile menu -->
-<div id="mobile-menu" class="sm:hidden hidden mt-4 pb-4 border-t border-gray-200">
+</div><div id="mobile-menu" class="sm:hidden hidden mt-4 pb-4 border-t border-gray-200">
 <div class="flex flex-col space-y-3 pt-4"><a class="nav-link py-2 px-1 text-base" href="#home" onclick="toggleMobileMenu()">Trang chủ</a> <a class="nav-link py-2 px-1 text-base" href="#about" onclick="toggleMobileMenu()">Giới thiệu</a> <a class="nav-link py-2 px-1 text-base" href="#products" onclick="toggleMobileMenu()">Sản phẩm</a> <a class="nav-link py-2 px-1 text-base" href="#reviews" onclick="toggleMobileMenu()">Đánh giá</a> <a class="nav-link py-2 px-1 text-base" href="#contact" onclick="toggleMobileMenu()">Liên hệ</a>
-<!-- Mobile Search -->
 <div class="pt-3 border-t border-gray-200 mt-3">
 <button class="flex items-center space-x-2 py-2 px-1 text-gray-600 hover:text-purple-600 transition-colors" onclick="toggleSearchModal(); toggleMobileMenu();">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
 </svg><span>Tìm kiếm</span> </button>
 </div>
-<!-- Mobile Login (ĐÃ BỎ ICON) -->
 <div class="pt-3 border-t border-gray-200 mt-3">
     <button id="mobile-login-button" onclick="loginWithGoogle(); toggleMobileMenu();" class="flex items-center space-x-2 py-2 px-1 text-gray-600 hover:text-purple-600 transition-colors">
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" height="1em" width="1em"><path d="M20.94 11.001c.08.64.12 1.29.12 1.96 0 5.9-4.8 10.7-10.7 10.7-5.92 0-10.72-4.8-10.72-10.7 0-5.9 4.8-10.7 10.7-10.7 3.08 0 5.8 1.3 7.7 3.3l-2.76 2.7c-1.12-.9-2.7-1.6-4.9-1.6-4.12 0-7.48 3.3-7.48 7.3s3.36 7.3 7.48 7.3c4.76 0 6.78-3.5 7.08-5.3h-7.1v-3.4h10.36z"></path></svg>
@@ -176,9 +163,7 @@ scroll-margin-top: 80px;
 </div>
 </div>
 </nav>
-</header><!-- Main Content -->
-<main class="flex-1"><!-- Section 1: Homepage -->
-<section id="home" class="relative py-20 px-6 bg-white">
+</header><main class="flex-1"><section id="home" class="relative py-20 px-6 bg-white">
 <div class="max-w-7xl mx-auto">
 <div class="grid lg:grid-cols-2 gap-12 items-center">
 <div class="space-y-8 text-center lg:text-left">
@@ -187,7 +172,7 @@ scroll-margin-top: 80px;
 <h2 id="hero-title" class="text-4xl lg:text-6xl font-bold leading-tight text-gray-900">Nước hoa cao cấp cho mọi khoảnh khắc</h2>
 <p id="hero-subtitle" class="text-xl text-gray-600 max-w-lg mx-auto lg:mx-0">Thưởng thức bộ sưu tập nước hoa cao cấp được tuyển chọn kỹ lưỡng từ những thương hiệu danh tiếng nhất thế giới.</p>
 </div>
-<div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"><button id="cta-button" class="simple-button">Mua ngay</button> <button class="simple-button-outline" onclick="document.getElementById('about').scrollIntoView({behavior: 'smooth'})">Tìm hiểu thêm</button>
+<div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"><button id="cta-button" class="simple-button" onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})">Mua ngay</button> <button class="simple-button-outline" onclick="document.getElementById('about').scrollIntoView({behavior: 'smooth'})">Tìm hiểu thêm</button>
 </div>
 </div>
 <div class="relative">
@@ -205,8 +190,7 @@ SINH VIÊN
 </div>
 </div>
 </div>
-</div><!-- Featured Products Preview -->
-<div class="max-w-7xl mx-auto mt-20">
+</div><div class="max-w-7xl mx-auto mt-20">
 <div class="text-center mb-16">
 <h3 class="text-4xl font-bold mb-4 text-gray-900">Sản phẩm nổi bật</h3>
 <p class="text-xl text-gray-600">Khám phá những hương thơm được yêu thích nhất</p>
@@ -267,8 +251,7 @@ Giới hạn
 <div class="text-center mt-12"><button class="simple-button" onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})">Xem tất cả sản phẩm</button>
 </div>
 </div>
-</section><!-- Section 2: About Us -->
-<section id="about" class="py-20 px-6 bg-gray-100">
+</section><section id="about" class="py-20 px-6 bg-gray-100">
 <div class="max-w-4xl mx-auto">
 <div class="text-center mb-16">
 <h2 class="text-4xl font-bold mb-6 text-gray-900">Về chúng tôi</h2>
@@ -313,22 +296,18 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 </section>
 
-<!-- Section 3: Products (ĐÃ CẬP NHẬT) -->
 <section id="products" class="py-20 px-6 bg-white">
 <div class="max-w-7xl mx-auto">
 <div class="text-center mb-16">
 <h2 class="text-4xl font-bold mb-6 text-gray-900">Bộ sưu tập nước hoa</h2>
 <p class="text-xl text-gray-600">Khám phá những hương thơm tinh tế và sang trọng</p>
-</div><!-- Product Categories -->
-<div id="filter-buttons" class="flex flex-wrap justify-center gap-4 mb-12">
+</div><div id="filter-buttons" class="flex flex-wrap justify-center gap-4 mb-12">
     <button class="simple-button" onclick="filterProducts(this, 'all')">Tất cả</button>
     <button class="simple-button-outline" onclick="filterProducts(this, 'nam')">Nam</button>
     <button class="simple-button-outline" onclick="filterProducts(this, 'nu')">Nữ</button>
     <button class="simple-button-outline" onclick="filterProducts(this, 'unisex')">Unisex</button>
-</div><!-- Products Grid -->
-<div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+</div><div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
 
-    <!-- Product 1 -->
     <div class="simple-card product-card" data-category="nu">
         <div class="relative aspect-square bg-gray-50 rounded-t-lg flex items-center justify-center">
             <div class="perfume-bottle w-32 h-40">
@@ -350,7 +329,6 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
         </div>
     </div>
 
-    <!-- Product 2 -->
     <div class="group cursor-pointer bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 product-card" data-category="nam">
         <div class="relative overflow-hidden rounded-t-2xl aspect-square bg-gradient-to-br from-blue-100 to-blue-200">
             <div class="w-full h-full flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
@@ -371,7 +349,6 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
         </div>
     </div>
 
-    <!-- Product 3 -->
     <div class="group cursor-pointer bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 product-card" data-category="unisex">
         <div class="relative overflow-hidden rounded-t-2xl aspect-square bg-gradient-to-br from-amber-100 to-amber-200">
             <div class="w-full h-full flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
@@ -395,7 +372,6 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
         </div>
     </div>
 
-    <!-- Product 4 -->
     <div class="group cursor-pointer bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 product-card" data-category="nu">
         <div class="relative overflow-hidden rounded-t-2xl aspect-square bg-gradient-to-br from-green-100 to-green-200">
             <div class="w-full h-full flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
@@ -416,7 +392,6 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
         </div>
     </div>
 
-    <!-- Product 5 -->
     <div class="group cursor-pointer bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 product-card" data-category="nam">
         <div class="relative overflow-hidden rounded-t-2xl aspect-square bg-gradient-to-br from-indigo-100 to-indigo-200">
             <div class="w-full h-full flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
@@ -437,7 +412,6 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
         </div>
     </div>
 
-    <!-- Product 6 -->
     <div class="group cursor-pointer bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 product-card" data-category="unisex">
         <div class="relative overflow-hidden rounded-t-2xl aspect-square bg-gradient-to-br from-purple-100 to-purple-200">
             <div class="w-full h-full flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
@@ -465,15 +439,12 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 </section>
 
-<!-- Section 4: Customer Reviews -->
 <section id="reviews" class="py-20 px-6 bg-white">
 <div class="max-w-6xl mx-auto">
 <div class="text-center mb-16">
 <h2 class="text-4xl font-bold mb-6 text-gray-900">Đánh giá khách hàng</h2>
 <p class="text-xl text-gray-600">Những chia sẻ chân thực từ khách hàng của chúng tôi</p>
-</div><!-- Reviews Grid -->
-<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"><!-- Review 1 -->
-<div class="bg-gray-50 rounded-2xl p-6 space-y-4">
+</div><div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"><div class="bg-gray-50 rounded-2xl p-6 space-y-4">
 <div class="flex items-center space-x-4">
 <div class="w-12 h-12 rounded-full overflow-hidden">
 <div class="w-full h-full bg-gradient-to-br from-pink-200 to-pink-300 flex items-center justify-center"><span class="text-lg">👩</span>
@@ -488,8 +459,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 <p class="text-gray-600 leading-relaxed">"Mình đã mua chai Hoa hồng thanh lịch và rất hài lòng. Hương thơm rất tinh tế, không quá nồng và giữ được mùi suốt cả ngày. Giá cả phù hợp với sinh viên như mình."</p>
 <p class="text-sm text-gray-500">Đã mua: Hoa hồng thanh lịch</p>
-</div><!-- Review 2 -->
-<div class="bg-gray-50 rounded-2xl p-6 space-y-4">
+</div><div class="bg-gray-50 rounded-2xl p-6 space-y-4">
 <div class="flex items-center space-x-4">
 <div class="w-12 h-12 rounded-full overflow-hidden">
 <div class="w-full h-full bg-gradient-to-br from-blue-200 to-blue-300 flex items-center justify-center"><span class="text-lg">👨</span>
@@ -504,8 +474,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 <p class="text-gray-600 leading-relaxed">"Shop tư vấn rất nhiệt tình, giúp mình chọn được chai Gió biển phù hợp. Mùi hương rất nam tính và tươi mát. Giao hàng nhanh, đóng gói cẩn thận."</p>
 <p class="text-sm text-gray-500">Đã mua: Gió biển</p>
-</div><!-- Review 3 -->
-<div class="bg-gray-50 rounded-2xl p-6 space-y-4">
+</div><div class="bg-gray-50 rounded-2xl p-6 space-y-4">
 <div class="flex items-center space-x-4">
 <div class="w-12 h-12 rounded-full overflow-hidden">
 <div class="w-full h-full bg-gradient-to-br from-green-200 to-green-300 flex items-center justify-center"><span class="text-lg">👩</span>
@@ -520,8 +489,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 <p class="text-gray-600 leading-relaxed">"Chai Tím lavender mình mua rất thích! Mùi hương thư giãn, rất phù hợp để dùng hàng ngày. Chất lượng tốt, giá cả hợp lý. Sẽ ủng hộ shop lâu dài."</p>
 <p class="text-sm text-gray-500">Đã mua: Tím lavender</p>
-</div><!-- Review 4 -->
-<div class="bg-gray-50 rounded-2xl p-6 space-y-4">
+</div><div class="bg-gray-50 rounded-2xl p-6 space-y-4">
 <div class="flex items-center space-x-4">
 <div class="w-12 h-12 rounded-full overflow-hidden">
 <div class="w-full h-full bg-gradient-to-br from-purple-200 to-purple-300 flex items-center justify-center"><span class="text-lg">👨</span>
@@ -536,8 +504,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 <p class="text-gray-600 leading-relaxed">"Lần đầu mua nước hoa online nhưng rất hài lòng với chất lượng. Chai Đêm sâu thẳm có mùi rất đặc biệt, rất thích hợp cho buổi tối. Chắc chắn sẽ quay lại."</p>
 <p class="text-sm text-gray-500">Đã mua: Đêm sâu thẳm</p>
-</div><!-- Review 5 -->
-<div class="bg-gray-50 rounded-2xl p-6 space-y-4">
+</div><div class="bg-gray-50 rounded-2xl p-6 space-y-4">
 <div class="flex items-center space-x-4">
 <div class="w-12 h-12 rounded-full overflow-hidden">
 <div class="w-full h-full bg-gradient-to-br from-yellow-200 to-yellow-300 flex items-center justify-center"><span class="text-lg">👩</span>
@@ -552,8 +519,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 <p class="text-gray-600 leading-relaxed">"Shop có nhiều loại nước hoa đa dạng, mình đã thử Hoàng hôn vàng và rất ưng ý. Mùi hương vừa ngọt vừa ấm, rất phù hợp với cá tính của mình."</p>
 <p class="text-sm text-gray-500">Đã mua: Hoàng hôn vàng</p>
-</div><!-- Review 6 -->
-<div class="bg-gray-50 rounded-2xl p-6 space-y-4">
+</div><div class="bg-gray-50 rounded-2xl p-6 space-y-4">
 <div class="flex items-center space-x-4">
 <div class="w-12 h-12 rounded-full overflow-hidden">
 <div class="w-full h-full bg-gradient-to-br from-red-200 to-red-300 flex items-center justify-center"><span class="text-lg">👨</span>
@@ -569,8 +535,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 <p class="text-gray-600 leading-relaxed">"Dịch vụ khách hàng rất tốt, shop luôn sẵn sàng tư vấn và giải đáp thắc mắc. Sản phẩm chất lượng, đóng gói đẹp. Rất recommend cho các bạn sinh viên."</p>
 <p class="text-sm text-gray-500">Đã mua: Rừng xanh</p>
 </div>
-</div><!-- Newsletter Signup -->
-<div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-3xl p-8 lg:p-12 text-center">
+</div><div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-3xl p-8 lg:p-12 text-center">
 <h3 class="text-3xl font-bold text-gray-900 mb-4">Đăng ký nhận tin</h3>
 <p class="text-lg text-gray-600 mb-8">Nhận thông báo về sản phẩm mới và ưu đãi đặc biệt</p>
 <form class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto" onsubmit="handleNewsletter(event)"><input type="email" placeholder="Nhập email của bạn" class="flex-1 px-6 py-4 rounded-full border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors" required> <button type="submit" class="px-8 py-4 bg-purple-600 text-white rounded-full font-semibold hover:bg-purple-700 transition-colors">Đăng ký</button>
@@ -578,15 +543,13 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 <div id="newsletter-message" class="text-sm text-gray-600 mt-4"></div>
 </div>
 </div>
-</section><!-- Section 5: Contact -->
-<section id="contact" class="py-20 px-6 bg-gray-100">
+</section><section id="contact" class="py-20 px-6 bg-gray-100">
 <div class="max-w-4xl mx-auto">
 <div class="text-center mb-16">
 <h2 class="text-4xl font-bold mb-6 text-gray-900">Liên hệ với chúng tôi</h2>
 <p class="text-xl text-gray-600">Chúng tôi luôn sẵn sàng hỗ trợ bạn</p>
 </div>
-<div class="grid lg:grid-cols-2 gap-12"><!-- Contact Info -->
-<div class="space-y-8">
+<div class="grid lg:grid-cols-2 gap-12"><div class="space-y-8">
 <div>
 <h3 class="text-2xl font-bold text-gray-900 mb-6">Thông tin liên hệ</h3>
 <div class="space-y-4">
@@ -623,14 +586,12 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 </div>
 </div>
-</div><!-- Social Media -->
-<div>
+</div><div>
 <h4 class="text-lg font-semibold text-gray-900 mb-4">Theo dõi chúng tôi</h4>
 <div class="flex space-x-4"><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors"> <span class="text-lg">📘</span> </a> <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-pink-600 text-white rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors"> <span class="text-lg">📷</span> </a> <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-red-600 text-white rounded-full flex items-center justify-center hover:bg-red-700 transition-colors"> <span class="text-lg">📺</span> </a> <a href="https://zalo.me" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors"> <span class="text-lg">💬</span> </a>
 </div>
 </div>
-</div><!-- Contact Form -->
-<div class="bg-white rounded-2xl p-8">
+</div><div class="bg-white rounded-2xl p-8">
 <h3 class="text-2xl font-bold text-gray-900 mb-6">Gửi tin nhắn</h3>
 <form class="space-y-6" onsubmit="handleContactForm(event)">
 <div><label for="name" class="block text-sm font-semibold text-gray-900 mb-2">Họ và tên</label> <input type="text" id="name" name="name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" required>
@@ -649,11 +610,9 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 </div>
 </section>
-</main><!-- Footer -->
-<footer class="bg-gray-900 text-white py-12 px-6">
+</main><footer class="bg-gray-900 text-white py-12 px-6">
 <div class="max-w-7xl mx-auto">
-<div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8"><!-- Company Info -->
-<div class="col-span-2 md:col-span-1 space-y-4">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8"><div class="col-span-2 md:col-span-1 space-y-4">
 <div class="flex items-center space-x-3">
 <div class="w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center"><span class="text-white font-bold text-lg">T</span>
 </div>
@@ -663,8 +622,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 </div>
 <p class="text-gray-400 text-sm leading-relaxed">Nước hoa cao cấp dành cho những người sành điệu với giá cả phù hợp sinh viên.</p>
-</div><!-- Quick Links -->
-<div class="space-y-4">
+</div><div class="space-y-4">
 <h4 class="font-semibold text-lg">Liên kết nhanh</h4>
 <div class="space-y-2 text-sm">
 <div>
@@ -680,8 +638,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 <a href="#reviews" class="text-gray-400 hover:text-white transition-colors">Đánh giá</a>
 </div>
 </div>
-</div><!-- Policies -->
-<div class="space-y-4">
+</div><div class="space-y-4">
 <h4 class="font-semibold text-lg">Chính sách</h4>
 <div class="space-y-2 text-sm">
 <div>
@@ -697,8 +654,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 <a href="#" class="text-gray-400 hover:text-white transition-colors" onclick="showPolicy('terms')">Điều khoản sử dụng</a>
 </div>
 </div>
-</div><!-- Customer Support -->
-<div class="space-y-4">
+</div><div class="space-y-4">
 <h4 class="font-semibold text-lg">Hỗ trợ khách hàng</h4>
 <div class="space-y-2 text-sm text-gray-400">
 <div>
@@ -714,12 +670,10 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 </div>
 </div>
-</div><!-- Bottom Footer -->
-<div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+</div><div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
 <div class="text-sm text-gray-400">
 © 2024 Tạp hóa sinh viên. Được tạo ra với tình yêu dành cho những hương thơm đặc biệt.
-</div><!-- Bocongthuong Badge -->
-<div class="flex items-center space-x-4">
+</div><div class="flex items-center space-x-4">
 <div class="bg-white rounded-lg p-2">
 <div class="w-16 h-12 bg-gradient-to-r from-red-500 to-yellow-500 rounded flex items-center justify-center"><span class="text-white text-xs font-bold">BCT</span>
 </div>
@@ -736,7 +690,6 @@ Bộ Công Thương
 </div>
 </div>
 </footer>
-<!-- Shopping Cart Modal -->
 <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
 <div class="flex items-center justify-center min-h-screen p-4">
 <div class="bg-white rounded-2xl max-w-md w-full max-h-96 overflow-hidden">
@@ -758,7 +711,6 @@ Bộ Công Thương
 </div>
 </div>
 
-<!-- Search Modal (ĐÃ THÊM MỚI) -->
 <div id="search-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
 <div class="flex items-center justify-center min-h-screen p-4">
 <div class="bg-white rounded-2xl max-w-md w-full max-h-[80vh] overflow-hidden flex flex-col">
@@ -768,10 +720,8 @@ Bộ Công Thương
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 </svg></button>
 </div>
-<!-- Ô tìm kiếm -->
 <input type="text" id="search-input" onkeyup="performSearch()" placeholder="Nhập tên nước hoa..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
 </div>
-<!-- Kết quả tìm kiếm -->
 <div id="search-results" class="p-6 flex-1 overflow-y-auto">
 <p class="text-gray-500 text-center">Nhập từ khóa để tìm kiếm</p>
 </div>
@@ -819,12 +769,11 @@ showNotification(`Đã thêm "${productName}" vào giỏ hàng!`);
 function updateCartDisplay() {
 const cartCount = document.getElementById('cart-count');
 const cartItems = document.getElementById('cart-items');
-// (MỚI) Thêm bộ đếm giỏ hàng cho mobile
-const cartCountMobile = document.getElementById('cart-count-mobile');
+// ĐÃ XÓA: const cartCountMobile = document.getElementById('cart-count-mobile');
 const cartTotalEl = document.getElementById('cart-total');
 
 cartCount.textContent = cart.length;
-cartCountMobile.textContent = cart.length; // (MỚI) Cập nhật bộ đếm mobile
+// cartCountMobile.textContent = cart.length; // Dòng này bị xóa
 
 cartTotalEl.textContent = formatPrice(cartTotal);
 
@@ -1173,8 +1122,6 @@ window.addEventListener('scroll', updateActiveNavLink);
 updateActiveNavLink(); // Initial call
 </script>
 
-<!-- SDK CỦA FIREBASE (MỚI) -->
-<!-- Chúng ta dùng phiên bản 8.10.0 tương thích với cú pháp cũ (không 'import') -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
@@ -1261,4 +1208,3 @@ updateActiveNavLink(); // Initial call
 
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9967da13e3755c30',t:'MTc2MTc5NTIxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
