@@ -96,71 +96,15 @@ scroll-margin-top: 80px;
 </style>
 <style>@view-transition { navigation: auto; }</style>
 <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
-</head>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
-      (function() {
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+    (function() {
       // Đảm bảo thay thế bằng PUBLIC KEY của bạn
       emailjs.init("W9rFfW9hW_748etKm"); 
     })();
-
-    document.getElementById('checkout-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        // 1. Lấy và Validate dữ liệu
-        const name = document.getElementById('checkout-name').value.trim();
-        const phone = document.getElementById('checkout-phone').value.trim();
-        const address = document.getElementById('checkout-address').value.trim();
-        
-        // Kiểm tra dữ liệu bắt buộc và giỏ hàng
-        if (!name || !phone || !address) {
-            alert('Vui lòng điền đầy đủ Họ tên, Số điện thoại và Địa chỉ nhận hàng.');
-            return;
-        }
-        if (typeof cart === 'undefined' || cart.length === 0) {
-            alert('Giỏ hàng trống. Không thể tạo đơn hàng.');
-            return;
-        }
-
-        const note = document.getElementById('checkout-note').value.trim();
-        // Lấy phương thức thanh toán
-        const paymentElement = document.querySelector('input[name="checkout-payment"]:checked');
-        const payment = paymentElement ? paymentElement.value : 'Chưa chọn';
-
-        // 2. Định dạng nội dung giỏ hàng (sử dụng <br> cho HTML email)
-        const cartItems = cart.map(item => 
-            `• ${item.name} - SL: ${item.quantity} x ${formatPrice(item.price)}`
-        ).join('<br>'); 
-
-        const total = formatPrice(cart.reduce((sum, item) => sum + item.price * item.quantity, 0));
-
-        const templateParams = {
-            checkout_name: name,
-            checkout_phone: phone,
-            checkout_address: address,
-            checkout_note: note || 'Không có ghi chú',
-            checkout_payment: payment,
-            checkout_cart: cartItems,
-            checkout_total: total
-        };
-
-        // 3. Gửi Email
-        // Thay thế bằng Service ID và Template ID của bạn
-      emailjs.init("W9rFfW9hW_748etKm");
-      emailjs.send('service_h8tuoqb', 'template_t1612tv', templateParams)
-            .then(() => {
-                alert('🎉 Đơn hàng đã được gửi thành công! Bạn sẽ nhận email xác nhận sớm.');
-                
-                // Xử lý sau khi gửi thành công
-                if (typeof toggleCheckoutModal === 'function') toggleCheckoutModal();
-                cart = []; // Xóa giỏ hàng
-                if (typeof updateCart === 'function') updateCart(); // Cập nhật giao diện giỏ hàng
-            })
-            .catch(err => {
-                console.error('Lỗi gửi email:', err);
-                alert('❌ Gửi email thất bại. Vui lòng kiểm tra lại kết nối mạng hoặc liên hệ hỗ trợ.');
-            });
-    });
 </script>
+</head>
+
 <body class="min-h-full bg-white text-gray-900">
 <div class="min-h-full flex flex-col"><header class="bg-white border-b border-gray-200 sticky top-0 z-50 w-full">
 <nav class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
@@ -671,47 +615,6 @@ Bộ Công Thương
 </div>
 </div>
 </div>
-<!-- CHECKOUT MODAL -->
-<div id="checkout-modal" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-  <div class="bg-white w-full max-w-md mx-4 rounded-2xl shadow-lg p-6 relative">
-    <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Thông tin thanh toán</h2>
-
-    <form id="checkout-form" class="space-y-4">
-      <div>
-        <label class="block text-gray-700 font-medium mb-1">Họ và tên</label>
-        <input type="text" id="checkout-name" required
-               class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none">
-      </div>
-
-      <div>
-        <label class="block text-gray-700 font-medium mb-1">Số điện thoại</label>
-        <input type="tel" id="checkout-phone" required pattern="[0-9]{9,11}"
-               class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none">
-      </div>
-
-      <div>
-        <label class="block text-gray-700 font-medium mb-1">Địa chỉ giao hàng</label>
-        <textarea id="checkout-address" required rows="2"
-                  class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"></textarea>
-      </div>
-
-      <div>
-        <label class="block text-gray-700 font-medium mb-1">Ghi chú (tuỳ chọn)</label>
-        <textarea id="checkout-note" rows="2"
-                  class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-300 outline-none"></textarea>
-      </div>
-
-      <div class="flex justify-between items-center mt-6">
-        <button type="button" onclick="toggleCheckoutModal()" class="px-4 py-2 rounded-full bg-gray-200 hover:bg-gray-300 transition">
-          Hủy
-        </button>
-        <button type="submit" class="px-6 py-2 rounded-full bg-purple-600 text-white font-semibold hover:bg-purple-700 transition">
-          Xác nhận đặt hàng
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
 
 </div>
 <script>
@@ -905,7 +808,7 @@ function checkout() {
         alert('🎉 Đơn hàng đã được gửi thành công! Bạn sẽ nhận email xác nhận sớm.');
         checkoutModal.remove();
         cart = [];
-        updateCart();
+        updateCartDisplay(); // <<< SỬA LỖI Ở ĐÂY
       })
       .catch(err => {
         console.error('Lỗi gửi email:', err);
@@ -1503,43 +1406,75 @@ async function loadCartForUser(uid) {
     });
   }
 
-  // 3. Hàm quan trọng: Theo dõi trạng thái đăng nhập (ĐÃ SỬA, KHÔNG DÙNG AVATAR)
-auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    // Khi người dùng đăng nhập
-    const serverCart = await loadCartForUser(user.uid); // đọc giỏ từ Firestore
-    const guestCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
+  // 3. Hàm quan trọng: Theo dõi trạng thái đăng nhập (ĐÃ SỬA LỖI)
+  auth.onAuthStateChanged(async (user) => {
+        
+    // Lấy các element UI (cho cả desktop và mobile)
+    const loginButton = document.getElementById('login-button');
+    const userInfoDiv = document.getElementById('user-info');
+    const mobileLoginButton = document.getElementById('mobile-login-button');
+    const mobileUserInfoDiv = document.getElementById('mobile-user-info');
 
-    // Gộp giỏ hàng (nếu có)
-    const merged = {};
-    function addItemsToMap(items) {
-      (items || []).forEach(i => {
-        if (!merged[i.name]) merged[i.name] = { ...i };
-        else {
-          merged[i.name].quantity += i.quantity;
-          merged[i.name].subtotal = merged[i.name].price * merged[i.name].quantity;
-        }
-      });
+    if (user) {
+      // ========= PHẦN 1: CẬP NHẬT GIAO DIỆN =========
+      // Ẩn nút "Đăng nhập", Hiện thông tin user
+      loginButton.classList.add('hidden');
+      userInfoDiv.classList.remove('hidden');
+      userInfoDiv.classList.add('flex');
+      mobileLoginButton.classList.add('hidden');
+      mobileUserInfoDiv.classList.remove('hidden');
+      mobileUserInfoDiv.classList.add('flex');
+
+      // Cập nhật tên user
+      document.getElementById('user-name').textContent = user.displayName;
+      document.getElementById('mobile-user-name').textContent = user.displayName;
+
+      // ========= PHẦN 2: XỬ LÝ GIỎ HÀNG =========
+      const serverCart = await loadCartForUser(user.uid); // đọc giỏ từ Firestore
+      const guestCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
+
+      // Gộp giỏ hàng (nếu có)
+      const merged = {};
+      function addItemsToMap(items) {
+        (items || []).forEach(i => {
+          if (!merged[i.name]) merged[i.name] = { ...i };
+          else {
+            merged[i.name].quantity += i.quantity;
+            merged[i.name].subtotal = merged[i.name].price * merged[i.name].quantity;
+          }
+        });
+      }
+      addItemsToMap(serverCart);
+      addItemsToMap(guestCart);
+
+      cart = Object.values(merged);
+      
+      // Lưu lại giỏ hàng đã hợp nhất lên Firestore
+      saveCartForUser(user.uid);
+
+      // Xóa giỏ khách tạm
+      localStorage.removeItem('guestCart');
+      
+    } else {
+      // ========= PHẦN 1: CẬP NHẬT GIAO DIỆN (Khi đăng xuất) =========
+      // Hiện nút "Đăng nhập", Ẩn thông tin user
+      loginButton.classList.remove('hidden');
+      loginButton.classList.add('flex');
+      userInfoDiv.classList.add('hidden');
+      userInfoDiv.classList.remove('flex');
+      mobileLoginButton.classList.remove('hidden');
+      mobileUserInfoDiv.classList.add('hidden');
+      mobileUserInfoDiv.classList.remove('flex');
+
+      // ========= PHẦN 2: XỬ LÝ GIỎ HÀNG (Khi đăng xuất) =========
+      cart = [];
     }
-    addItemsToMap(serverCart);
-    addItemsToMap(guestCart);
 
-    cart = Object.values(merged);
-    cartTotal = cart.reduce((sum, i) => sum + i.subtotal, 0);
+    // ========= PHẦN 3: CẬP NHẬT GIỎ HÀNG (LUÔN CHẠY) =========
+    // Tính lại tổng tiền và cập nhật UI giỏ hàng sau khi login/logout
+    cartTotal = cart.reduce((sum, i) => sum + (i.subtotal || 0), 0);
     updateCartDisplay();
-
-    // Lưu lại giỏ hàng đã hợp nhất lên Firestore
-    saveCartForUser(user.uid);
-
-    // Xóa giỏ khách tạm
-    localStorage.removeItem('guestCart');
-  } else {
-    // Khi đăng xuất
-    cart = [];
-    cartTotal = 0;
-    updateCartDisplay();
-  }
-});
+  });
 
 </script>
 
