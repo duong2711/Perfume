@@ -145,7 +145,8 @@ scroll-margin-top: 80px;
 
         // 3. Gửi Email
         // Thay thế bằng Service ID và Template ID của bạn
-        emailjs.send('service_h8tuoqb', 'template_t1612tv', templateParams)
+      emailjs.init("W9rFfW9hW_748etKm");
+      emailjs.send('service_h8tuoqb', 'template_t1612tv', templateParams)
             .then(() => {
                 alert('🎉 Đơn hàng đã được gửi thành công! Bạn sẽ nhận email xác nhận sớm.');
                 
