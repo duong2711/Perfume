@@ -1569,28 +1569,37 @@ renderProducts(productsData); // <<< TỰ ĐỘNG HIỂN THỊ SẢN PHẨM KHI 
   // 🔹 3. Đăng nhập Google
   async function loginWithGoogle() {
     try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
 
-      currentUser = {
-        name: user.displayName,
-        email: user.email,
-        photo: user.photoURL
-      };
-      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    currentUser = {
+      name: user.displayName,
+      email: user.email,
+      photo: user.photoURL
+    };
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
 
-      // Tự tạo user document nếu chưa có
-      const userRef = doc(db, "users", currentUser.email);
-      const docSnap = await getDoc(userRef);
-      if (!docSnap.exists()) {
-        await setDoc(userRef, {
-          name: currentUser.name,
-          email: currentUser.email,
-          cart: [],
-          orders: []
-        });
-        console.log("✅ Đã tạo tài khoản mới trong Firestore!");
-      }
+    const userRef = doc(db, "users", currentUser.email);
+    const docSnap = await getDoc(userRef);
+    if (!docSnap.exists()) {
+      await setDoc(userRef, {
+        name: currentUser.name,
+        email: currentUser.email,
+        cart: [],
+        orders: []
+      });
+    }
+
+    const data = (await getDoc(userRef)).data();
+    cart = data.cart || [];
+    updateCartDisplay();
+
+    alert(`Chào mừng ${currentUser.name}!`);
+  } catch (error) {
+    console.error("🔥 Lỗi đăng nhập:", error);
+    alert("Đăng nhập thất bại: " + error.message);
+  }
+}
 
       // Lấy giỏ hàng Firestore
       const data = (await getDoc(userRef)).data();
@@ -1650,22 +1659,17 @@ renderProducts(productsData); // <<< TỰ ĐỘNG HIỂN THỊ SẢN PHẨM KHI 
 
   // 🔹 7. Đăng xuất
   async function logout() {
-      try {
-    await signOut(auth); // 🔹 Đăng xuất khỏi Firebase
-    localStorage.removeItem("currentUser"); // 🔹 Xoá thông tin local
+     try {
+    await signOut(auth); // đăng xuất hoàn toàn khỏi Firebase
+    localStorage.removeItem("currentUser");
     currentUser = null;
     cart = [];
     updateCartDisplay();
-
-    // 🔹 Cập nhật giao diện
-    document.getElementById("login-button").classList.remove("hidden");
-    document.getElementById("user-info").classList.add("hidden");
 
     alert("Bạn đã đăng xuất thành công!");
     console.log("✅ User signed out");
   } catch (error) {
     console.error("Lỗi khi đăng xuất:", error);
-    alert("Đăng xuất thất bại, vui lòng thử lại!");
   }
 }
 
