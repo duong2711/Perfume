@@ -103,6 +103,43 @@ scroll-margin-top: 80px;
   (function() {
     emailjs.init("W9rFfW9hW_748etKm");
   })();
+  document.getElementById('checkout-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const name = document.getElementById('checkout-name').value.trim();
+  const phone = document.getElementById('checkout-phone').value.trim();
+  const address = document.getElementById('checkout-address').value.trim();
+  const note = document.getElementById('checkout-note').value.trim();
+  const payment = document.querySelector('input[name="checkout-payment"]:checked').value;
+
+  const cartItems = cart.map(item => 
+    `${item.name} - SL: ${item.quantity} x ${formatPrice(item.price)}`
+  ).join('\n');
+
+  const total = formatPrice(cart.reduce((sum, item) => sum + item.price * item.quantity, 0));
+
+  const templateParams = {
+    checkout_name: name,
+    checkout_phone: phone,
+    checkout_address: address,
+    checkout_note: note || 'Không có ghi chú',
+    checkout_payment: payment,
+    checkout_cart: cartItems,
+    checkout_total: total
+  };
+
+  emailjs.send('service_h8tuoqb','template_t1612tv', templateParams)
+    .then(() => {
+      alert('🎉 Đơn hàng đã được gửi thành công! Bạn sẽ nhận email xác nhận sớm.');
+      toggleCheckoutModal();
+      cart = [];
+      updateCart();
+    })
+    .catch(err => {
+      console.error('Lỗi gửi email:', err);
+      alert('❌ Gửi email thất bại. Vui lòng thử lại.');
+    });
+});
 </script>
 <body class="min-h-full bg-white text-gray-900">
 <div class="min-h-full flex flex-col"><header class="bg-white border-b border-gray-200 sticky top-0 z-50 w-full">
@@ -843,7 +880,7 @@ function checkout() {
       checkout_total: total
     };
 
-    emailjs.send("service_r5fbvhn", "template_b9iwsy7", templateParams)
+    emailjs.send("service_nnsewvz", "template_b9iwsy7", templateParams)
       .then(() => {
         alert('🎉 Đơn hàng đã được gửi thành công! Bạn sẽ nhận email xác nhận sớm.');
         checkoutModal.remove();
@@ -1350,45 +1387,6 @@ updateCartDisplay();
 window.addEventListener('scroll', updateActiveNavLink);
 updateActiveNavLink(); // Initial call
 renderProducts(productsData); // <<< TỰ ĐỘNG HIỂN THỊ SẢN PHẨM KHI TẢI TRANG
-
-document.getElementById('checkout-form').addEventListener('submit', function(e) {
-  e.preventDefault();
-
-  const name = document.getElementById('checkout-name').value.trim();
-  const phone = document.getElementById('checkout-phone').value.trim();
-  const address = document.getElementById('checkout-address').value.trim();
-  const note = document.getElementById('checkout-note').value.trim();
-  const payment = document.querySelector('input[name="checkout-payment"]:checked').value;
-
-  const cartItems = cart.map(item => 
-    `${item.name} - SL: ${item.quantity} x ${formatPrice(item.price)}`
-  ).join('\n');
-
-  const total = formatPrice(cart.reduce((sum, item) => sum + item.price * item.quantity, 0));
-
-  const templateParams = {
-    checkout_name: name,
-    checkout_phone: phone,
-    checkout_address: address,
-    checkout_note: note || 'Không có ghi chú',
-    checkout_payment: payment,
-    checkout_cart: cartItems,
-    checkout_total: total
-  };
-
-  emailjs.send("service_h8tuoqb", "template_t1612tv", templateParams)
-    .then(() => {
-      alert('🎉 Đơn hàng đã được gửi thành công! Bạn sẽ nhận email xác nhận sớm.');
-      toggleCheckoutModal();
-      cart = [];
-      updateCart();
-    })
-    .catch(err => {
-      console.error('Lỗi gửi email:', err);
-      alert('❌ Gửi email thất bại. Vui lòng thử lại.');
-    });
-});
-
 </script>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
