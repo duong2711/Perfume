@@ -1568,7 +1568,7 @@ renderProducts(productsData); // <<< TỰ ĐỘNG HIỂN THỊ SẢN PHẨM KHI 
 
   // 🔹 3. Đăng nhập Google
   async function loginWithGoogle() {
-     try {
+    try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
 
@@ -1581,7 +1581,6 @@ renderProducts(productsData); // <<< TỰ ĐỘNG HIỂN THỊ SẢN PHẨM KHI 
 
     const userRef = doc(db, "users", currentUser.email);
     const docSnap = await getDoc(userRef);
-
     if (!docSnap.exists()) {
       await setDoc(userRef, {
         name: currentUser.name,
@@ -1589,10 +1588,8 @@ renderProducts(productsData); // <<< TỰ ĐỘNG HIỂN THỊ SẢN PHẨM KHI 
         cart: [],
         orders: []
       });
-      console.log("✅ Tạo tài khoản Firestore mới");
     }
 
-    // 🔹 Luôn tải lại cart chính xác của tài khoản vừa đăng nhập
     const data = (await getDoc(userRef)).data();
     cart = data.cart || [];
     updateCartDisplay();
@@ -1603,12 +1600,14 @@ renderProducts(productsData); // <<< TỰ ĐỘNG HIỂN THỊ SẢN PHẨM KHI 
     alert("Đăng nhập thất bại: " + error.message);
   }
 }
+
   // 🔹 4. Lưu giỏ hàng lên Firestore
   async function saveCart() {
-      if (!currentUser) return;
-  const userRef = doc(db, "users", currentUser.email);
-  await updateDoc(userRef, { cart });
-}
+    if (!currentUser) return;
+    const userRef = doc(db, "users", currentUser.email);
+    await updateDoc(userRef, { cart });
+    console.log("🔄 Giỏ hàng đã lưu lên Firestore");
+  }
 
   // 🔹 5. Khi đặt hàng
   async function confirmOrder() {
@@ -1648,25 +1647,18 @@ renderProducts(productsData); // <<< TỰ ĐỘNG HIỂN THỊ SẢN PHẨM KHI 
 
   // 🔹 7. Đăng xuất
   async function logout() {
-  try {
-    await signOut(auth);
-
-    // 🔹 Xoá dữ liệu người dùng cục bộ
+      try {
+    await signOut(auth); // đăng xuất hoàn toàn khỏi Firebase
     localStorage.removeItem("currentUser");
     currentUser = null;
-
-    // 🔹 Làm trống giỏ hàng
     cart = [];
-    updateCartDisplay(); // cập nhật giao diện: 0 sản phẩm, 0 tổng tiền
-
+    updateCartDisplay();
     alert("Bạn đã đăng xuất thành công!");
     console.log("✅ User signed out");
   } catch (error) {
     console.error("Lỗi khi đăng xuất:", error);
-    alert("Đăng xuất thất bại, vui lòng thử lại!");
   }
 }
-
   // 🔹 8. Giả sử bạn đã có hàm này để cập nhật giao diện giỏ hàng
   function updateCartDisplay() {
     console.log("🛒 Giỏ hàng hiện tại:", cart);
