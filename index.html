@@ -98,6 +98,68 @@ scroll-margin-top: 80px;
 <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
 </head>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+      (function() {
+      // Đảm bảo thay thế bằng PUBLIC KEY của bạn
+      emailjs.init("W9rFfW9hW_748etKm"); 
+    })();
+
+    document.getElementById('checkout-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // 1. Lấy và Validate dữ liệu
+        const name = document.getElementById('checkout-name').value.trim();
+        const phone = document.getElementById('checkout-phone').value.trim();
+        const address = document.getElementById('checkout-address').value.trim();
+        
+        // Kiểm tra dữ liệu bắt buộc và giỏ hàng
+        if (!name || !phone || !address) {
+            alert('Vui lòng điền đầy đủ Họ tên, Số điện thoại và Địa chỉ nhận hàng.');
+            return;
+        }
+        if (typeof cart === 'undefined' || cart.length === 0) {
+            alert('Giỏ hàng trống. Không thể tạo đơn hàng.');
+            return;
+        }
+
+        const note = document.getElementById('checkout-note').value.trim();
+        // Lấy phương thức thanh toán
+        const paymentElement = document.querySelector('input[name="checkout-payment"]:checked');
+        const payment = paymentElement ? paymentElement.value : 'Chưa chọn';
+
+        // 2. Định dạng nội dung giỏ hàng (sử dụng <br> cho HTML email)
+        const cartItems = cart.map(item => 
+            `• ${item.name} - SL: ${item.quantity} x ${formatPrice(item.price)}`
+        ).join('<br>'); 
+
+        const total = formatPrice(cart.reduce((sum, item) => sum + item.price * item.quantity, 0));
+
+        const templateParams = {
+            checkout_name: name,
+            checkout_phone: phone,
+            checkout_address: address,
+            checkout_note: note || 'Không có ghi chú',
+            checkout_payment: payment,
+            checkout_cart: cartItems,
+            checkout_total: total
+        };
+
+        // 3. Gửi Email
+        // Thay thế bằng Service ID và Template ID của bạn
+      emailjs.init("W9rFfW9hW_748etKm");
+      emailjs.send('service_h8tuoqb', 'template_t1612tv', templateParams)
+            .then(() => {
+                alert('🎉 Đơn hàng đã được gửi thành công! Bạn sẽ nhận email xác nhận sớm.');
+                
+                // Xử lý sau khi gửi thành công
+                if (typeof toggleCheckoutModal === 'function') toggleCheckoutModal();
+                cart = []; // Xóa giỏ hàng
+                if (typeof updateCart === 'function') updateCart(); // Cập nhật giao diện giỏ hàng
+            })
+            .catch(err => {
+                console.error('Lỗi gửi email:', err);
+                alert('❌ Gửi email thất bại. Vui lòng kiểm tra lại kết nối mạng hoặc liên hệ hỗ trợ.');
+            });
+    });
 </script>
 <body class="min-h-full bg-white text-gray-900">
 <div class="min-h-full flex flex-col"><header class="bg-white border-b border-gray-200 sticky top-0 z-50 w-full">
