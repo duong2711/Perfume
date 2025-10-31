@@ -1412,6 +1412,124 @@ renderProducts(productsData); // <<< TỰ ĐỘNG HIỂN THỊ SẢN PHẨM KHI 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
+<script type="module">
+// Import Firebase SDK
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ✅ Cấu hình Firebase của bạn
+  const firebaseConfig = {
+    apiKey: "AIzaSyCpN2sFWa5h-hJkWTSPAaGLFz_g2bRz2kI",
+    authDomain: "tap-hoa-sinh-vien.firebaseapp.com",
+    projectId: "tap-hoa-sinh-vien",
+    storageBucket: "tap-hoa-sinh-vien.firebasestorage.app",
+    messagingSenderId: "744293953875",
+    appId: "1:744293953875:web:5e75ebbc2202f4519071a6",
+    measurementId: "G-4PDW6ZGK90"
+};
+
+// Khởi tạo
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Biến giỏ hàng toàn cục
+let cart = [];
+
+// 🔹 Đăng nhập bằng Google
+window.loginWithGoogle = async function() {
+  const provider = new GoogleAuthProvider();
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    alert(`Đăng nhập thành công: ${user.displayName}`);
+    await loadCartFromFirestore(user.uid);
+    updateCartDisplay();
+  } catch (error) {
+    console.error("Đăng nhập thất bại:", error);
+    alert("Đăng nhập thất bại, vui lòng thử lại!");
+  }
+};
+
+// 🔹 Đăng xuất
+window.logout = async function() {
+  await signOut(auth);
+  cart = [];
+  updateCartDisplay();
+  alert("Đã đăng xuất!");
+};
+
+// 🔹 Theo dõi trạng thái đăng nhập
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    document.getElementById("user-info").classList.remove("hidden");
+    document.getElementById("login-button").classList.add("hidden");
+    document.getElementById("user-name").textContent = user.displayName;
+
+    await loadCartFromFirestore(user.uid);
+  } else {
+    document.getElementById("user-info").classList.add("hidden");
+    document.getElementById("login-button").classList.remove("hidden");
+
+    cart = [];
+    updateCartDisplay();
+  }
+});
+
+// 🔹 Lưu giỏ hàng lên Firestore
+async function saveCartToFirestore(userId) {
+  try {
+    await setDoc(doc(db, "carts", userId), { cart });
+    console.log("Đã lưu giỏ hàng!");
+  } catch (error) {
+    console.error("Lỗi lưu giỏ hàng:", error);
+  }
+}
+
+// 🔹 Tải giỏ hàng từ Firestore
+async function loadCartFromFirestore(userId) {
+  try {
+    const docSnap = await getDoc(doc(db, "carts", userId));
+    if (docSnap.exists()) {
+      cart = docSnap.data().cart || [];
+      console.log("Đã tải giỏ hàng:", cart);
+    } else {
+      cart = [];
+    }
+    updateCartDisplay();
+  } catch (error) {
+    console.error("Lỗi tải giỏ hàng:", error);
+  }
+}
+// 🧩 Theo dõi thay đổi giỏ hàng theo thời gian thực
+import { onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+function listenToCartRealtime(userId) {
+  const cartRef = doc(db, "carts", userId);
+  onSnapshot(cartRef, (snapshot) => {
+    if (snapshot.exists()) {
+      cart = snapshot.data().cart || [];
+      updateCartDisplay();
+      console.log("🔄 Giỏ hàng cập nhật real-time:", cart);
+    }
+  }, (error) => {
+    console.error("❌ Lỗi lắng nghe Firestore:", error);
+  });
+}
+
+// 🧩 Cập nhật giỏ hàng mỗi khi thay đổi
+window.addToCart = function(name, price) {
+  const existing = cart.find(p => p.name === name);
+  if (existing) existing.quantity++;
+  else cart.push({ name, price, quantity: 1 });
+  
+  updateCartDisplay();
+
+  if (auth.currentUser) saveCartToFirestore(auth.currentUser.uid);
+};
+</script>
+
 <script>
   // *** ĐÂY LÀ MÃ CẤU HÌNH CỦA BẠN (firebaseConfig) ***
   const firebaseConfig = {
