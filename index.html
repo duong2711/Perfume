@@ -880,15 +880,10 @@ function filterProducts(btnElement, category) {
 
 // Hàm mới: Thêm sản phẩm vào giỏ hàng (kiểm tra trùng lặp)
 function addToCart(productName, price, buttonElement) {
-    const user = firebase.auth().currentUser;
-if (user) {
-  saveCartForUser(user.uid);
-} else {
-  localStorage.setItem('guestCart', JSON.stringify(cart));
-}
   // Lấy image source từ data-image của nút
     const imageSrc = buttonElement.getAttribute('data-image') || '❓'; 
     const existingItem = cart.find(item => item.name === productName);
+
     if (existingItem) {
         existingItem.quantity += 1;
         existingItem.subtotal += price;
@@ -901,20 +896,25 @@ if (user) {
             image: imageSrc 
         });
     }
+
     cartTotal = cart.reduce((total, item) => total + item.subtotal, 0);
     updateCartDisplay();
     showNotification(`Đã thêm 1 x "${productName}" vào giỏ hàng!`);
+
+    // *** ĐÃ DI CHUYỂN LOGIC LƯU XUỐNG ĐÂY ***
+    // Lưu giỏ hàng MỚI sau khi đã cập nhật
+    const user = firebase.auth().currentUser;
+    if (user) {
+      saveCartForUser(user.uid);
+    } else {
+      localStorage.setItem('guestCart', JSON.stringify(cart));
+    }
 }
 
 // Hàm mới: Điều chỉnh số lượng (Cộng/Trừ)
 function setQuantity(productName, delta) {
-  const user = firebase.auth().currentUser;
-if (user) {
-  saveCartForUser(user.uid);
-} else {
-  localStorage.setItem('guestCart', JSON.stringify(cart));
-}
 const itemIndex = cart.findIndex(item => item.name === productName);
+    
     if (itemIndex > -1) {
         const item = cart[itemIndex];
         const newQuantity = item.quantity + delta;
@@ -931,22 +931,32 @@ const itemIndex = cart.findIndex(item => item.name === productName);
         cartTotal = cart.reduce((total, item) => total + item.subtotal, 0);
         updateCartDisplay();
     }
+
+    // *** ĐÃ DI CHUYỂN LOGIC LƯU XUỐNG ĐÂY ***
+    const user = firebase.auth().currentUser;
+    if (user) {
+      saveCartForUser(user.uid);
+    } else {
+      localStorage.setItem('guestCart', JSON.stringify(cart));
+    }
 }
 
 // Hàm mới: Xóa toàn bộ sản phẩm khỏi giỏ hàng
 function deleteItem(productName) {
-    const user = firebase.auth().currentUser;
-if (user) {
-  saveCartForUser(user.uid);
-} else {
-  localStorage.setItem('guestCart', JSON.stringify(cart));
-}
-
-  const itemIndex = cart.findIndex(item => item.name === productName);
+    const itemIndex = cart.findIndex(item => item.name === productName);
+    
     if (itemIndex > -1) {
         cartTotal -= cart[itemIndex].subtotal;
         cart.splice(itemIndex, 1);
         updateCartDisplay();
+    }
+
+    // *** ĐÃ DI CHUYỂN LOGIC LƯU XUỐNG ĐÂY ***
+    const user = firebase.auth().currentUser;
+    if (user) {
+      saveCartForUser(user.uid);
+    } else {
+      localStorage.setItem('guestCart', JSON.stringify(cart));
     }
 }
 
