@@ -1650,12 +1650,24 @@ renderProducts(productsData); // <<< TỰ ĐỘNG HIỂN THỊ SẢN PHẨM KHI 
 
   // 🔹 7. Đăng xuất
   async function logout() {
-    await signOut(auth);
-    localStorage.removeItem("currentUser");
+      try {
+    await signOut(auth); // 🔹 Đăng xuất khỏi Firebase
+    localStorage.removeItem("currentUser"); // 🔹 Xoá thông tin local
+    currentUser = null;
     cart = [];
     updateCartDisplay();
-    alert("Bạn đã đăng xuất.");
+
+    // 🔹 Cập nhật giao diện
+    document.getElementById("login-button").classList.remove("hidden");
+    document.getElementById("user-info").classList.add("hidden");
+
+    alert("Bạn đã đăng xuất thành công!");
+    console.log("✅ User signed out");
+  } catch (error) {
+    console.error("Lỗi khi đăng xuất:", error);
+    alert("Đăng xuất thất bại, vui lòng thử lại!");
   }
+}
 
   // 🔹 8. Giả sử bạn đã có hàm này để cập nhật giao diện giỏ hàng
   function updateCartDisplay() {
