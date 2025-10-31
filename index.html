@@ -1462,20 +1462,39 @@ renderProducts(productsData); // <<< TỰ ĐỘNG HIỂN THỊ SẢN PHẨM KHI 
   // 1. Hàm đăng nhập bằng Google
   function loginWithGoogle() {
     auth.signInWithPopup(provider)
-      .then((result) => {
-        // Đăng nhập thành công.
-        const user = result.user;
-        console.log("Đăng nhập thành công:", user);
-        showNotification(`Chào mừng ${user.displayName}!`);
-        toggleMobileMenu(); // Tự động đóng menu mobile nếu đang mở
-      })
-      .catch((error) => {
-        // Xử lý lỗi
-        console.error("Lỗi đăng nhập:", error);
-        showNotification("Đăng nhập thất bại: " + error.message);
-      });
-  }
+    .then((result) => {
+      // 🔹 Đăng nhập thành công
+      const user = result.user;
+      console.log("Đăng nhập thành công:", user);
 
+      // 🔹 Gán user vào biến currentUser và lưu localStorage
+      currentUser = {
+        name: user.displayName,
+        email: user.email,
+        photo: user.photoURL
+      };
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
+      // 🔹 Cập nhật giao diện
+      document.getElementById("login-button").classList.add("hidden");
+      document.getElementById("user-info").classList.remove("hidden");
+      document.getElementById("user-name").textContent = currentUser.name;
+
+      // 🔹 Đóng menu mobile nếu có
+      toggleMobileMenu();
+
+      // 🔹 Khôi phục giỏ hàng và lịch sử cũ (nếu có)
+      cart = JSON.parse(localStorage.getItem(`cart_${currentUser.email}`)) || [];
+      updateCartDisplay();
+
+      // 🔹 Hiển thị chào mừng
+      showNotification(`Chào mừng ${currentUser.name}!`);
+    })
+    .catch((error) => {
+      console.error("Lỗi đăng nhập:", error);
+      showNotification("Đăng nhập thất bại: " + error.message);
+    });
+}
   // 2. Hàm đăng xuất
   function logout() {
     auth.signOut().then(() => {
