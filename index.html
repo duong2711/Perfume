@@ -989,28 +989,35 @@ function addToCart(productName, price, buttonElement) {
     alert('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.');
     return;
   }
-    // Lấy image source từ data-image của nút
-    const imageSrc = buttonElement.getAttribute('data-image') || '❓'; 
 
-    const existingItem = cart.find(item => item.name === productName);
+  // 🔹 Lấy ảnh sản phẩm từ data-image
+  const imageSrc = buttonElement.getAttribute('data-image') || '❓'; 
 
-    if (existingItem) {
-        existingItem.quantity += 1;
-        existingItem.subtotal += price;
-    } else {
-        cart.push({
-            name: productName,
-            price: price,
-            quantity: 1,
-            subtotal: price,
-            image: imageSrc 
-        });
-    }
+  // 🔹 Kiểm tra xem sản phẩm đã có trong giỏ chưa
+  const existingItem = cart.find(item => item.name === productName);
 
-    cartTotal = cart.reduce((total, item) => total + item.subtotal, 0);
-    saveCart();
-    updateCartDisplay();
-    showNotification(`Đã thêm 1 x "${productName}" vào giỏ hàng!`);
+  if (existingItem) {
+    existingItem.quantity += 1;
+    existingItem.subtotal += price;
+  } else {
+    cart.push({
+      name: productName,
+      price: price,
+      quantity: 1,
+      subtotal: price,
+      image: imageSrc
+    });
+  }
+
+  // 🔹 Tính lại tổng tiền
+  cartTotal = cart.reduce((total, item) => total + item.subtotal, 0);
+
+  // 🔹 Lưu giỏ hàng vào localStorage (theo tài khoản hiện tại)
+  saveCart();
+
+  // 🔹 Cập nhật giao diện
+  updateCartDisplay();
+  showNotification(`Đã thêm 1 x "${productName}" vào giỏ hàng!`);
 }
 
 // Hàm mới: Điều chỉnh số lượng (Cộng/Trừ)
