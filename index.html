@@ -161,6 +161,9 @@ scroll-margin-top: 80px;
             });
     });
 </script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <body class="min-h-full bg-white text-gray-900">
 <div class="min-h-full flex flex-col"><header class="bg-white border-b border-gray-200 sticky top-0 z-50 w-full">
 <nav class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
@@ -977,11 +980,15 @@ function filterProducts(btnElement, category) {
 
 // Hàm mới: Thêm sản phẩm vào giỏ hàng (kiểm tra trùng lặp)
 function addToCart(productName, price, buttonElement) {
-    // Lấy image source từ data-image của nút
+    const user = firebase.auth().currentUser;
+if (user) {
+  saveCartForUser(user.uid);
+} else {
+  localStorage.setItem('guestCart', JSON.stringify(cart));
+}
+  // Lấy image source từ data-image của nút
     const imageSrc = buttonElement.getAttribute('data-image') || '❓'; 
-
     const existingItem = cart.find(item => item.name === productName);
-
     if (existingItem) {
         existingItem.quantity += 1;
         existingItem.subtotal += price;
@@ -994,7 +1001,6 @@ function addToCart(productName, price, buttonElement) {
             image: imageSrc 
         });
     }
-
     cartTotal = cart.reduce((total, item) => total + item.subtotal, 0);
     updateCartDisplay();
     showNotification(`Đã thêm 1 x "${productName}" vào giỏ hàng!`);
@@ -1002,8 +1008,13 @@ function addToCart(productName, price, buttonElement) {
 
 // Hàm mới: Điều chỉnh số lượng (Cộng/Trừ)
 function setQuantity(productName, delta) {
-    const itemIndex = cart.findIndex(item => item.name === productName);
-    
+  const user = firebase.auth().currentUser;
+if (user) {
+  saveCartForUser(user.uid);
+} else {
+  localStorage.setItem('guestCart', JSON.stringify(cart));
+}
+const itemIndex = cart.findIndex(item => item.name === productName);
     if (itemIndex > -1) {
         const item = cart[itemIndex];
         const newQuantity = item.quantity + delta;
@@ -1024,8 +1035,14 @@ function setQuantity(productName, delta) {
 
 // Hàm mới: Xóa toàn bộ sản phẩm khỏi giỏ hàng
 function deleteItem(productName) {
-    const itemIndex = cart.findIndex(item => item.name === productName);
-    
+    const user = firebase.auth().currentUser;
+if (user) {
+  saveCartForUser(user.uid);
+} else {
+  localStorage.setItem('guestCart', JSON.stringify(cart));
+}
+
+  const itemIndex = cart.findIndex(item => item.name === productName);
     if (itemIndex > -1) {
         cartTotal -= cart[itemIndex].subtotal;
         cart.splice(itemIndex, 1);
@@ -1426,6 +1443,38 @@ renderProducts(productsData); // <<< TỰ ĐỘNG HIỂN THỊ SẢN PHẨM KHI 
 
   // Khởi tạo Firebase
   firebase.initializeApp(firebaseConfig);
+  // Khởi tạo Firestore
+const db = firebase.firestore();
+
+// Hàm lưu giỏ hàng của user
+async function saveCartForUser(uid) {
+  if (!uid) return;
+  try {
+    await db.collection('carts').doc(uid).set({
+      items: cart,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  } catch (err) {
+    console.error('Lỗi lưu giỏ hàng:', err);
+  }
+}
+
+// Hàm đọc giỏ hàng của user
+async function loadCartForUser(uid) {
+  if (!uid) return [];
+  try {
+    const doc = await db.collection('carts').doc(uid).get();
+    if (doc.exists) {
+      return doc.data().items || [];
+    } else {
+      return [];
+    }
+  } catch (err) {
+    console.error('Lỗi đọc giỏ hàng:', err);
+    return [];
+  }
+}
+
   const auth = firebase.auth();
   const provider = new firebase.auth.GoogleAuthProvider();
 
@@ -1458,38 +1507,42 @@ renderProducts(productsData); // <<< TỰ ĐỘNG HIỂN THỊ SẢN PHẨM KHI 
   }
 
   // 3. Hàm quan trọng: Theo dõi trạng thái đăng nhập (ĐÃ SỬA, KHÔNG DÙNG AVATAR)
-  auth.onAuthStateChanged((user) => {
-    // Lấy các element cho cả desktop và mobile
-    const loginButton = document.getElementById('login-button');
-    const userInfoDiv = document.getElementById('user-info');
-    const mobileLoginButton = document.getElementById('mobile-login-button');
-    const mobileUserInfoDiv = document.getElementById('mobile-user-info');
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    // Khi người dùng đăng nhập
+    const serverCart = await loadCartForUser(user.uid); // đọc giỏ từ Firestore
+    const guestCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
 
-    if (user) {
-      // Nếu người dùng ĐÃ đăng nhập
-      loginButton.classList.add('hidden');
-      userInfoDiv.classList.remove('hidden');
-      userInfoDiv.classList.add('flex'); // (MỚI) Đảm bảo user info hiển thị dạng flex
-      mobileLoginButton.classList.add('hidden');
-      mobileUserInfoDiv.classList.remove('hidden');
-      mobileUserInfoDiv.classList.add('flex'); // (MỚI) Đảm bảo user info hiển thị dạng flex
-
-      // Cập nhật thông tin cho cả desktop
-      document.getElementById('user-name').textContent = user.displayName;
-      // Cập nhật thông tin cho cả mobile
-      document.getElementById('mobile-user-name').textContent = user.displayName;
-
-    } else {
-      // Nếu người dùng CHƯA đăng nhập
-      loginButton.classList.remove('hidden');
-      loginButton.classList.add('flex'); // (MỚI) Đảm bảo nút login hiển thị dạng flex
-      userInfoDiv.classList.add('hidden');
-      userInfoDiv.classList.remove('flex');
-      mobileLoginButton.classList.remove('hidden');
-      mobileUserInfoDiv.classList.add('hidden');
-      mobileUserInfoDiv.classList.remove('flex');
+    // Gộp giỏ hàng (nếu có)
+    const merged = {};
+    function addItemsToMap(items) {
+      (items || []).forEach(i => {
+        if (!merged[i.name]) merged[i.name] = { ...i };
+        else {
+          merged[i.name].quantity += i.quantity;
+          merged[i.name].subtotal = merged[i.name].price * merged[i.name].quantity;
+        }
+      });
     }
-  });
+    addItemsToMap(serverCart);
+    addItemsToMap(guestCart);
+
+    cart = Object.values(merged);
+    cartTotal = cart.reduce((sum, i) => sum + i.subtotal, 0);
+    updateCartDisplay();
+
+    // Lưu lại giỏ hàng đã hợp nhất lên Firestore
+    saveCartForUser(user.uid);
+
+    // Xóa giỏ khách tạm
+    localStorage.removeItem('guestCart');
+  } else {
+    // Khi đăng xuất
+    cart = [];
+    cartTotal = 0;
+    updateCartDisplay();
+  }
+});
 
 </script>
 
