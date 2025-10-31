@@ -97,6 +97,13 @@ scroll-margin-top: 80px;
 <style>@view-transition { navigation: auto; }</style>
 <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
 </head>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  // ✅ KHỞI TẠO EMAILJS
+  (function() {
+    emailjs.init("W9rFfW9hW_748etKm");
+  })();
+</script>
 <body class="min-h-full bg-white text-gray-900">
 <div class="min-h-full flex flex-col"><header class="bg-white border-b border-gray-200 sticky top-0 z-50 w-full">
 <nav class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
@@ -200,7 +207,7 @@ SINH VIÊN
 <p class="text-xl text-gray-600">Khám phá những hương thơm được yêu thích nhất</p>
 </div>
 <div class="grid md:grid-cols-3 gap-8">
-<div class="simple-card cursor-pointer p-6" onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})">
+<div class="simple-card cursor-pointer p-6" data-name="hoa hồng thanh lịch" onclick="focusProduct('Hoa hồng thanh lịch')">
 <div class="relative mb-6 aspect-square bg-gray-50 rounded-lg flex items-center justify-center">
 <div class="perfume-bottle w-32 h-40">
 <div class="absolute top-2 left-1/2 transform -translate-x-1/2 w-4 h-6 bg-gray-400 rounded-t"></div>
@@ -218,7 +225,7 @@ Mới
 </div>
 </div>
 </div>
-<div class="simple-card cursor-pointer p-6" onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})">
+<div class="simple-card cursor-pointer p-6" data-name="gió biển" onclick="focusProduct('Gió biển')">
 <div class="relative mb-6 aspect-square bg-gray-50 rounded-lg flex items-center justify-center">
 <div class="perfume-bottle w-32 h-40">
 <div class="absolute top-2 left-1/2 transform -translate-x-1/2 w-4 h-6 bg-gray-400 rounded-t"></div>
@@ -233,7 +240,7 @@ Mới
 </div>
 </div>
 </div>
-<div class="simple-card cursor-pointer p-6" onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})">
+<div class="simple-card cursor-pointer p-6" data-name="hoàng hôn vàng" onclick="focusProduct('Hoàng hôn vàng')">
 <div class="relative mb-6 aspect-square bg-gray-50 rounded-lg flex items-center justify-center">
 <div class="perfume-bottle w-32 h-40">
 <div class="absolute top-2 left-1/2 transform -translate-x-1/2 w-4 h-6 bg-gray-400 rounded-t"></div>
@@ -581,7 +588,10 @@ Bộ Công Thương
             </div>
             <div class="p-6 border-t bg-gray-50 flex-shrink-0">
                 <div class="flex items-center justify-between mb-4"><span class="font-semibold">Tổng cộng:</span> <span id="cart-total" class="font-bold text-xl text-purple-600">0₫</span>
-                </div><button class="w-full px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors" onclick="checkout()">Thanh toán</button>
+                </div><button class="w-full px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors"
+        onclick="handleCheckout2()">
+  Thanh toán
+</button>
             </div>
         </div>
     </div>
@@ -603,6 +613,47 @@ Bộ Công Thương
 </div>
 </div>
 </div>
+</div>
+<!-- CHECKOUT MODAL -->
+<div id="checkout-modal" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+  <div class="bg-white w-full max-w-md mx-4 rounded-2xl shadow-lg p-6 relative">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Thông tin thanh toán</h2>
+
+    <form id="checkout-form" class="space-y-4">
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">Họ và tên</label>
+        <input type="text" id="checkout-name" required
+               class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none">
+      </div>
+
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">Số điện thoại</label>
+        <input type="tel" id="checkout-phone" required pattern="[0-9]{9,11}"
+               class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none">
+      </div>
+
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">Địa chỉ giao hàng</label>
+        <textarea id="checkout-address" required rows="2"
+                  class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"></textarea>
+      </div>
+
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">Ghi chú (tuỳ chọn)</label>
+        <textarea id="checkout-note" rows="2"
+                  class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-300 outline-none"></textarea>
+      </div>
+
+      <div class="flex justify-between items-center mt-6">
+        <button type="button" onclick="toggleCheckoutModal()" class="px-4 py-2 rounded-full bg-gray-200 hover:bg-gray-300 transition">
+          Hủy
+        </button>
+        <button type="submit" class="px-6 py-2 rounded-full bg-purple-600 text-white font-semibold hover:bg-purple-700 transition">
+          Xác nhận đặt hàng
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
 
 </div>
@@ -695,6 +746,117 @@ mobileMenu.classList.toggle('hidden');
 }
 
 // *** LOGIC RENDERING VÀ LỌC SẢN PHẨM ***
+// Hiện / Ẩn form Checkout
+function toggleCheckoutModal() {
+  document.getElementById('checkout-modal').classList.toggle('hidden');
+}
+
+function handleCheckout2() {
+  if (cart.length === 0) {
+    alert('Giỏ hàng của bạn đang trống!');
+    return;
+  }
+  checkout(); // Gọi form EmailJS mới
+}
+function checkout() {
+  const checkoutModal = document.createElement('div');
+  checkoutModal.className = 'fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50';
+  checkoutModal.innerHTML = `
+    <div class="bg-white p-6 rounded-2xl shadow-xl max-w-md w-full relative animate-fadeIn">
+      <button onclick="this.closest('.fixed').remove()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">&times;</button>
+      <h2 class="text-xl font-semibold mb-4 text-purple-700">Thông tin thanh toán</h2>
+
+      <form id="checkout-form" class="space-y-4">
+        <input id="checkout-name" type="text" placeholder="Họ và tên" class="w-full border p-2 rounded" required>
+        <input id="checkout-phone" type="tel" placeholder="Số điện thoại" class="w-full border p-2 rounded" required>
+        <input id="checkout-address" type="text" placeholder="Địa chỉ giao hàng" class="w-full border p-2 rounded" required>
+        <textarea id="checkout-note" placeholder="Ghi chú (nếu có)" class="w-full border p-2 rounded"></textarea>
+
+        <div>
+          <label class="block font-medium text-gray-700 mb-1">Hình thức thanh toán</label>
+          <div class="space-y-2">
+            <label class="flex items-center gap-2">
+              <input type="radio" name="checkout-payment" value="Thanh toán khi nhận hàng (COD)" checked>
+              Thanh toán khi nhận hàng (COD)
+            </label>
+
+            <label class="flex items-center gap-2">
+              <input type="radio" name="checkout-payment" value="Chuyển khoản ngân hàng">
+              Chuyển khoản ngân hàng (MB Bank)
+            </label>
+            <div id="bank-info" class="hidden bg-gray-50 border p-2 rounded text-sm">
+              💳 <strong>MB Bank</strong><br>
+              👤 LÊ ĐẠI DƯƠNG<br>
+              🔢 0988007529
+            </div>
+
+            <label class="flex items-center gap-2">
+              <input type="radio" name="checkout-payment" value="Ví Momo">
+              Ví Momo
+            </label>
+            <div id="momo-info" class="hidden bg-gray-50 border p-2 rounded text-sm">
+              📱 0988007529<br>
+              👤 LÊ ĐẠI DƯƠNG<br>
+              <img src="https://i.postimg.cc/nzymLcRf/97f5d400-3296-4151-9478-cc01e923681c.jpg" alt="QR Momo" class="w-40 mt-2 rounded-lg">
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700 transition">
+          Xác nhận đặt hàng
+        </button>
+      </form>
+    </div>
+  `;
+  document.body.appendChild(checkoutModal);
+
+  // 🧩 Hiển thị chi tiết theo hình thức thanh toán
+  const radios = checkoutModal.querySelectorAll('input[name="checkout-payment"]');
+  radios.forEach(radio => {
+    radio.addEventListener('change', () => {
+      checkoutModal.querySelector('#bank-info').classList.toggle('hidden', radio.value !== 'Chuyển khoản ngân hàng');
+      checkoutModal.querySelector('#momo-info').classList.toggle('hidden', radio.value !== 'Ví Momo');
+    });
+  });
+
+  // 📧 Gửi email qua EmailJS
+  const form = checkoutModal.querySelector('#checkout-form');
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('checkout-name').value.trim();
+    const phone = document.getElementById('checkout-phone').value.trim();
+    const address = document.getElementById('checkout-address').value.trim();
+    const note = document.getElementById('checkout-note').value.trim();
+    const payment = document.querySelector('input[name="checkout-payment"]:checked').value;
+
+    const cartItems = cart.map(item => `${item.name} - SL: ${item.quantity} x ${formatPrice(item.price)}`).join('\n');
+    const total = formatPrice(cart.reduce((sum, item) => sum + item.price * item.quantity, 0));
+
+    const templateParams = {
+      checkout_name: name,
+      checkout_phone: phone,
+      checkout_address: address,
+      checkout_note: note || 'Không có ghi chú',
+      checkout_payment: payment,
+      checkout_cart: cartItems,
+      checkout_total: total
+    };
+
+    emailjs.send("service_r5fbvhn", "template_b9iwsy7", templateParams)
+      .then(() => {
+        alert('🎉 Đơn hàng đã được gửi thành công! Bạn sẽ nhận email xác nhận sớm.');
+        checkoutModal.remove();
+        cart = [];
+        updateCart();
+      })
+      .catch(err => {
+        console.error('Lỗi gửi email:', err);
+        alert('❌ Gửi email thất bại. Vui lòng thử lại.');
+      });
+  });
+}
+
 
 function renderProductCard(product) {
     // Hàm này tạo ra HTML cho một sản phẩm từ mảng data
@@ -719,7 +881,11 @@ function renderProductCard(product) {
                     <span class="text-2xl font-bold text-purple-600">
                         ${formatPrice(product.price)}
                     </span> 
-                    <button class="px-4 py-2 bg-purple-600 text-white rounded-full text-sm font-semibold hover:bg-purple-700 transition-colors" onclick="addToCart('${product.name}', ${product.price}, this)" data-image="${product.image}">Thêm vào giỏ</button>
+                    <button class="px-4 py-2 bg-purple-600 text-white rounded-full text-sm font-semibold hover:bg-purple-700 transition-colors whitespace-nowrap flex-shrink-0"
+        onclick="addToCart('${product.name}', ${product.price}, this)"
+        data-image="${product.image}">
+  Thêm vào giỏ
+</button>
                 </div>
             </div>
         </div>
@@ -860,7 +1026,12 @@ function toggleCart() {
 const cartModal = document.getElementById('cart-modal');
 cartModal.classList.toggle('hidden');
 }
-function checkout() {
+  // *** MÃ JAVASCRIPT CHO MODAL TÌM KIẾM (BỊ THIẾU) ***
+function toggleSearchModal() {
+    const searchModal = document.getElementById('search-modal');
+    searchModal.classList.toggle('hidden');
+}
+function handleCheckout() {
 if (cart.length === 0) {
 showNotification('Giỏ hàng trống!');
 return;
@@ -881,44 +1052,86 @@ currency: 'VND'
 
 // *** MÃ JAVASCRIPT TÌM KIẾM ***
 function performSearch() {
-  const searchTerm = document.getElementById('search-input').value.toLowerCase();
+  const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
   const resultsContainer = document.getElementById('search-results');
   resultsContainer.innerHTML = '';
 
   if (searchTerm.length < 2) {
-      resultsContainer.innerHTML = '<p class="text-gray-500 text-center">Nhập ít nhất 2 ký tự</p>';
-      return;
+    resultsContainer.innerHTML = '<p class="text-gray-500 text-center">Nhập ít nhất 2 ký tự</p>';
+    return;
   }
-  
-  const searchResults = productsData.filter(product => 
-      product.name.toLowerCase().includes(searchTerm) || 
-      product.desc.toLowerCase().includes(searchTerm)
-  );
+
+  // Chuẩn hóa tiếng Việt (bỏ dấu)
+  function normalize(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  }
+
+  const normalizedTerm = normalize(searchTerm);
+
+  // Lọc linh hoạt theo tên + mô tả
+  const searchResults = productsData.filter(product => {
+    const name = normalize(product.name);
+    const desc = normalize(product.desc);
+    return (
+      name.includes(normalizedTerm) ||
+      desc.includes(normalizedTerm) ||
+      normalizedTerm.split(" ").some(word => name.includes(word) || desc.includes(word))
+    );
+  });
 
   if (searchResults.length === 0) {
     resultsContainer.innerHTML = `<p class="text-gray-500 text-center">Không tìm thấy sản phẩm nào cho "${searchTerm}"</p>`;
     return;
   }
-  
-  searchResults.forEach(product => {
-      // Dùng renderProductCard để tạo HTML
-      const productHtml = renderProductCard(product);
-      
-      // Tạo div để chèn HTML (vì productClone không dùng được ở đây)
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = productHtml;
-      const productElement = tempDiv.firstChild;
-      
-      // Thêm sự kiện click cho kết quả tìm kiếm
-      productElement.addEventListener('click', () => {
-          toggleSearchModal();
-          document.getElementById('products').scrollIntoView({behavior: 'smooth'});
-          // Reset bộ lọc danh mục về "Tất cả"
-          filterProducts(document.querySelector('#filter-buttons button'), 'all');
-      });
 
-      resultsContainer.appendChild(productElement);
+  // Hiển thị danh sách kết quả (dùng event JS chứ không inline onclick)
+  resultsContainer.innerHTML = '';
+  searchResults.forEach(product => {
+    const div = document.createElement('div');
+    div.className = 'cursor-pointer p-4 border rounded-lg hover:bg-purple-50 transition';
+    div.innerHTML = `
+      <div class="font-semibold text-gray-900">${product.name}</div>
+      <div class="text-sm text-gray-600 truncate">${product.desc}</div>
+      <div class="text-purple-600 font-bold">${formatPrice(product.price)}</div>
+    `;
+    div.addEventListener('click', () => focusProduct(product.name));
+    resultsContainer.appendChild(div);
   });
+}
+function focusProduct(productName) {
+  // 1️⃣ Chỉ đóng modal nếu đang mở
+  const searchModal = document.getElementById('search-modal');
+  if (searchModal && !searchModal.classList.contains('hidden')) {
+    toggleSearchModal();
+  }
+
+  // 2️⃣ Tìm sản phẩm tương ứng trong danh sách
+  const allProducts = document.querySelectorAll('.product-card');
+  const targetName = productName.toLowerCase();
+  let foundCard = null;
+
+  allProducts.forEach(card => {
+    if (card.dataset.name === targetName) {
+      foundCard = card;
+    }
+  });
+
+  // 3️⃣ Nếu tìm thấy sản phẩm → cuộn thẳng tới đó và highlight
+  if (foundCard) {
+    const cardRect = foundCard.getBoundingClientRect();
+    const offset = cardRect.top + window.scrollY - window.innerHeight / 2 + cardRect.height / 2;
+    window.scrollTo({ top: offset, behavior: 'smooth' });
+
+    foundCard.classList.add('ring-4', 'ring-purple-400', 'transition-all', 'duration-300');
+
+    setTimeout(() => {
+      foundCard.classList.remove('ring-4', 'ring-purple-400');
+    }, 2000);
+  } else {
+    // Trường hợp chưa render sản phẩm (nếu user bấm quá sớm)
+    document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => focusProduct(productName), 600);
+  }
 }
 
 // Form handlers
@@ -934,7 +1147,7 @@ form.reset();
 
 setTimeout(() => {
 messageEl.textContent = '';
-}, 3000);
+}, 500);
 }
 function handleContactForm(event) {
 event.preventDefault();
@@ -947,7 +1160,7 @@ form.reset();
 
 setTimeout(() => {
 messageEl.textContent = '';
-}, 3000);
+}, 500);
 }
 // Policy links
 function showPolicy(policyType) {
@@ -970,7 +1183,7 @@ document.body.appendChild(notification);
 
 setTimeout(() => {
 notification.remove();
-}, 3000);
+}, 500);
 }
 // Navigation highlighting
 function updateActiveNavLink() {
@@ -1137,6 +1350,45 @@ updateCartDisplay();
 window.addEventListener('scroll', updateActiveNavLink);
 updateActiveNavLink(); // Initial call
 renderProducts(productsData); // <<< TỰ ĐỘNG HIỂN THỊ SẢN PHẨM KHI TẢI TRANG
+
+document.getElementById('checkout-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const name = document.getElementById('checkout-name').value.trim();
+  const phone = document.getElementById('checkout-phone').value.trim();
+  const address = document.getElementById('checkout-address').value.trim();
+  const note = document.getElementById('checkout-note').value.trim();
+  const payment = document.querySelector('input[name="checkout-payment"]:checked').value;
+
+  const cartItems = cart.map(item => 
+    `${item.name} - SL: ${item.quantity} x ${formatPrice(item.price)}`
+  ).join('\n');
+
+  const total = formatPrice(cart.reduce((sum, item) => sum + item.price * item.quantity, 0));
+
+  const templateParams = {
+    checkout_name: name,
+    checkout_phone: phone,
+    checkout_address: address,
+    checkout_note: note || 'Không có ghi chú',
+    checkout_payment: payment,
+    checkout_cart: cartItems,
+    checkout_total: total
+  };
+
+  emailjs.send("service_h8tuoqb", "template_t1612tv", templateParams)
+    .then(() => {
+      alert('🎉 Đơn hàng đã được gửi thành công! Bạn sẽ nhận email xác nhận sớm.');
+      toggleCheckoutModal();
+      cart = [];
+      updateCart();
+    })
+    .catch(err => {
+      console.error('Lỗi gửi email:', err);
+      alert('❌ Gửi email thất bại. Vui lòng thử lại.');
+    });
+});
+
 </script>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
