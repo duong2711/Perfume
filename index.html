@@ -1518,16 +1518,28 @@ function listenToCartRealtime(userId) {
   });
 }
 
-// 🧩 Cập nhật giỏ hàng mỗi khi thay đổi
-window.addToCart = function(name, price) {
-  const existing = cart.find(p => p.name === name);
-  if (existing) existing.quantity++;
-  else cart.push({ name, price, quantity: 1 });
-  
+// Ghi đè hàm addToCart để hoạt động với Firebase
+window.addToCart = function(name, price, btn) {
+  const existing = cart.find(i => i.name === name);
+  if (existing) {
+    existing.quantity++;
+  } else {
+    cart.push({ name, price, quantity: 1 });
+  }
+
   updateCartDisplay();
 
-  if (auth.currentUser) saveCartToFirestore(auth.currentUser.uid);
+  // Nếu đã đăng nhập, lưu giỏ hàng vào Firestore
+  if (auth.currentUser) {
+    saveCartToFirestore(auth.currentUser.uid);
+  }
+
+  // Hiệu ứng thông báo (tùy chọn)
+  if (typeof showNotification === "function") {
+    showNotification(`Đã thêm 1 x "${name}" vào giỏ hàng!`);
+  }
 };
+
 </script>
 
 <script>
