@@ -383,7 +383,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 <div>
 <p class="font-semibold text-gray-900">Điện thoại</p>
-<p id="phone-number" class="text-gray-600">0123 456 789</p>
+<p id="phone-number" class="text-gray-600">0988007529</p>
 </div>
 </div>
 <div class="flex items-center space-x-4">
@@ -391,7 +391,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 <div>
 <p class="font-semibold text-gray-900">Email</p>
-<p id="email-address" class="text-gray-600">contact@taphoasinhvien.com</p>
+<p id="email-address" class="text-gray-600">lddbaiu@gmail.com</p>
 </div>
 </div>
 <div class="flex items-center space-x-4">
@@ -399,7 +399,7 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 </div>
 <div>
 <p class="font-semibold text-gray-900">Địa chỉ</p>
-<p id="address" class="text-gray-600">123 Đường ABC, Quận 1, TP.HCM</p>
+<p id="address" class="text-gray-600">120 Đường Trần Hưng Đạo, Phường Bến Thành, Quận 1, TP.HCM</p>
 </div>
 </div>
 <div class="flex items-center space-x-4">
@@ -416,21 +416,42 @@ An đã tự học và trải nghiệm hàng trăm loại nước hoa khác nhau
 <div class="flex space-x-4"><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors"> <span class="text-lg">📘</span> </a> <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-pink-600 text-white rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors"> <span class="text-lg">📷</span> </a> <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-red-600 text-white rounded-full flex items-center justify-center hover:bg-red-700 transition-colors"> <span class="text-lg">📺</span> </a> <a href="https://zalo.me" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors"> <span class="text-lg">💬</span> </a>
 </div>
 </div>
-</div><div class="bg-white rounded-2xl p-8">
-<h3 class="text-2xl font-bold text-gray-900 mb-6">Gửi tin nhắn</h3>
-<form class="space-y-6" onsubmit="handleContactForm(event)">
-<div><label for="name" class="block text-sm font-semibold text-gray-900 mb-2">Họ và tên</label> <input type="text" id="name" name="name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" required>
 </div>
-<div><label for="email" class="block text-sm font-semibold text-gray-900 mb-2">Email</label> <input type="email" id="email" name="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" required>
-</div>
-<div><label for="phone" class="block text-sm font-semibold text-gray-900 mb-2">Số điện thoại</label> <input type="tel" id="phone" name="phone" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-</div>
-<div><label for="subject" class="block text-sm font-semibold text-gray-900 mb-2">Chủ đề</label> <select id="subject" name="subject" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"> <option value="">Chọn chủ đề</option> <option value="product">Tư vấn sản phẩm</option> <option value="order">Đơn hàng</option> <option value="complaint">Khiếu nại</option> <option value="other">Khác</option> </select>
-</div>
-<div><label for="message" class="block text-sm font-semibold text-gray-900 mb-2">Tin nhắn</label> <textarea id="message" name="message" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" required></textarea>
-</div><button type="submit" class="w-full px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors">Gửi tin nhắn</button>
-</form>
-<div id="contact-message" class="text-sm text-gray-600 mt-4"></div>
+   <div class="bg-white rounded-2xl p-6 md:p-8">
+    
+    <div id="comment-form-container" class="mb-8">
+        <h3 class="text-2xl font-bold text-gray-900 mb-4">Để lại bình luận</h3>
+        
+        <div id="comment-login-notice" class="hidden">
+            <p class="text-gray-600">
+                Bạn cần 
+                <button class="text-purple-600 font-semibold hover:underline" onclick="loginWithGoogle()">
+                    đăng nhập
+                </button> 
+                để để lại bình luận.
+            </p>
+        </div>
+
+        <form id="comment-form" class="hidden space-y-4" onsubmit="handleCommentSubmit(event)">
+            <textarea id="comment-text" 
+                      rows="4" 
+                      placeholder="Chia sẻ cảm nhận của bạn..." 
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" 
+                      required 
+                      minlength="10"></textarea>
+            
+            <button type="submit" 
+                    id="comment-submit-button" 
+                    class="w-full px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors">
+                Gửi bình luận
+            </button>
+        </form>
+        <div id="comment-message" class="text-sm text-green-600 mt-4"></div>
+    </div>
+
+    <div id="customer-comments-list" class="space-y-6 max-h-96 overflow-y-auto pr-2">
+        <p class="text-center text-gray-500">Đang tải bình luận...</p>
+    </div>
 </div>
 </div>
 </div>
