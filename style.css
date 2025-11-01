@@ -110,3 +110,63 @@ scroll-margin-top: 80px;
   opacity: 0.5;
   cursor: not-allowed;
 }
+/* Thêm vào cuối file style.css */
+
+/* Định dạng cho mỗi thẻ bình luận mới */
+.comment-card {
+  background: #f9fafb; /* bg-gray-50 */
+  border: 1px solid #e5e7eb; /* border-gray-200 */
+  border-radius: 1rem; /* rounded-2xl */
+  padding: 1rem; /* p-4 */
+  display: flex;
+  gap: 1rem; /* space-x-4 */
+}
+
+.comment-avatar img {
+  width: 2.5rem; /* w-10 */
+  height: 2.5rem; /* h-10 */
+  border-radius: 50%;
+  object-fit: cover;
+}
+/* Avatar dự phòng nếu không có ảnh */
+.comment-avatar-placeholder {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: #d1d5db; /* bg-gray-300 */
+  color: #4b5563; /* text-gray-600 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem; /* text-sm */
+  flex-shrink: 0;
+}
+
+.comment-body {
+  flex: 1;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+}
+
+.comment-name {
+  font-weight: 600;
+  color: #111827; /* text-gray-900 */
+}
+
+.comment-date {
+  font-size: 0.75rem; /* text-xs */
+  color: #6b7280; /* text-gray-500 */
+}
+
+.comment-text {
+  color: #374151; /* text-gray-700 */
+  line-height: 1.6;
+  white-space: pre-wrap; /* Giữ định dạng xuống dòng */
+  word-break: break-word; /* Chống vỡ layout */
+}
