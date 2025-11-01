@@ -110,53 +110,64 @@ function handleCheckout2() {
 function checkout(itemsToCheckout) {
   const checkoutModal = document.createElement('div');
   checkoutModal.className = 'fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50';
-  checkoutModal.innerHTML = `
-    <div class="bg-white p-6 rounded-2xl shadow-xl max-w-md w-full relative animate-fadeIn">
-      <button onclick="this.closest('.fixed').remove()" class="absolute top-3 right-3 p-2 hover:bg-gray-100 rounded-full text-gray-500 hover:text-gray-800">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-      </button>
-      <h2 class="text-xl font-semibold mb-4 text-purple-700">Thông tin thanh toán</h2>
+ checkoutModal.innerHTML = `
+    <div class="bg-white p-0 rounded-2xl shadow-xl max-w-md w-full flex flex-col max-h-[90vh]">
+      
+      <div class="p-6 border-b flex-shrink-0">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold text-purple-700">Thông tin thanh toán</h2>
+          <button onclick="this.closest('.fixed').remove()" class="p-2 hover:bg-gray-100 rounded-full text-gray-500 hover:text-gray-800">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+      </div>
 
-      <form id="checkout-form" class="space-y-4">
-        <input id="checkout-name" type="text" placeholder="Họ và tên" class="w-full border p-2 rounded" required>
-        <input id="checkout-phone" type="tel" placeholder="Số điện thoại" class="w-full border p-2 rounded" required>
-        <input id="checkout-address" type="text" placeholder="Địa chỉ giao hàng" class="w-full border p-2 rounded" required>
-        <textarea id="checkout-note" placeholder="Ghi chú (nếu có)" class="w-full border p-2 rounded"></textarea>
+      <div class="p-6 flex-1 overflow-y-auto">
+        <form id="checkout-form" class="space-y-4">
+          <input id="checkout-name" type="text" placeholder="Họ và tên" class="w-full border p-2 rounded" required>
+          <input id="checkout-phone" type="tel" placeholder="Số điện thoại" class="w-full border p-2 rounded" required>
+          <input id="checkout-address" type="text" placeholder="Địa chỉ giao hàng" class="w-full border p-2 rounded" required>
+          <textarea id="checkout-note" placeholder="Ghi chú (nếu có)" class="w-full border p-2 rounded"></textarea>
 
-        <div>
-          <label class="block font-medium text-gray-700 mb-1">Hình thức thanh toán</label>
-          <div class="space-y-2">
-            <label class="flex items-center gap-2">
-              <input type="radio" name="checkout-payment" value="Thanh toán khi nhận hàng (COD)" checked>
-              Thanh toán khi nhận hàng (COD)
-            </label>
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">Hình thức thanh toán</label>
+            <div class="space-y-2">
+              <label class="flex items-center gap-2">
+                <input type="radio" name="checkout-payment" value="Thanh toán khi nhận hàng (COD)" checked>
+                Thanh toán khi nhận hàng (COD)
+              </label>
 
-            <label class="flex items-center gap-2">
-              <input type="radio" name="checkout-payment" value="Chuyển khoản ngân hàng">
-              Chuyển khoản ngân hàng (MB Bank)
-            </label>
-            <div id="bank-info" class="hidden bg-gray-50 border p-2 rounded text-sm">
-              💳 <strong>MB Bank</strong><br>
-              👤 LÊ ĐẠI DƯƠNG<br>
-              🔢 0988007529
-            </div>
+              <label class="flex items-center gap-2">
+                <input type="radio" name="checkout-payment" value="Chuyển khoản ngân hàng">
+                Chuyển khoản ngân hàng (MB Bank)
+              </label>
+              <div id="bank-info" class="hidden bg-gray-50 border p-2 rounded text-sm">
+                💳 <strong>MB Bank</strong><br>
+                👤 LÊ ĐẠI DƯƠNG<br>
+                🔢 0988007529
+              </div>
 
-            <label class="flex items-center gap-2">
-              <input type="radio" name="checkout-payment" value="Ví Momo">
-              Ví Momo
-            </label>
-            <div id="momo-info" class="hidden bg-gray-50 border p-2 rounded text-sm">
-              📱 0988007529<br>
-              👤 LÊ ĐẠI DƯƠNG<br>
-              <img src="https://i.postimg.cc/7hpQJZs9/Picture1.png" alt="QR Momo" class="w-40 mt-2 rounded-lg">
+              <label class="flex items-center gap-2">
+                <input type="radio" name="checkout-payment" value="Ví Momo">
+                Ví Momo
+              </label>
+              <div id="momo-info" class="hidden bg-gray-50 border p-2 rounded text-sm">
+                📱 0988007529<br>
+                👤 LÊ ĐẠI DƯƠNG<br>
+                <img src="https://i.postimg.cc/7hpQJZs9/Picture1.png" alt="QR Momo" class="w-40 mt-2 rounded-lg">
+              </div>
+              
             </div>
           </div>
-        </div>
+        </form>
+      </div>
 
-        <button type="submit" class="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700 transition">
+      <div class="p-6 border-t bg-gray-50 flex-shrink-0">
+        <button type="submit" form="checkout-form" class="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700 transition">
           Xác nhận đặt hàng
         </button>
-      </form>
+      </div>
+
     </div>
   `;
   document.body.appendChild(checkoutModal);
@@ -1037,5 +1048,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateActiveNavLink(); // Initial call
     renderProducts(productsData); // Hiển thị sản phẩm
 });
+
 
 
