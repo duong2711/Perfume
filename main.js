@@ -426,18 +426,32 @@ function toggleCartItemSelection(productName) {
 
 
 // ⭐ HÀM NÀY ĐÃ SỬA: Thêm checkbox, tính tổng món đã chọn, bật/tắt nút
-// ⭐ THAY THẾ HÀM NÀY:
-// (Đã bọc checkbox và ảnh vào chung 1 div để không vỡ layout)
-// ⭐ THAY THẾ TOÀN BỘ HÀM NÀY:
 function updateCartDisplay() {
-    const cartCount = document.getElementById('cart-count');
+    // Lấy cả 3 bong bóng
+    const cartCount = document.getElementById('cart-count'); // Desktop
+    const mobileCartCount = document.getElementById('mobile-cart-count'); // Link trong Menu
+    const burgerCartCount = document.getElementById('burger-cart-count'); // Icon Burger
+    
     const cartItems = document.getElementById('cart-items');
     const cartTotalEl = document.getElementById('cart-total');
     const checkoutBtn = document.getElementById('checkout-button'); 
 
-    // Cập nhật số lượng tổng (vẫn đếm tất cả)
+    // Cập nhật số lượng tổng
     const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-    cartCount.textContent = totalItems;
+    
+    // ⭐ LOGIC MỚI: Cập nhật cả 3 bong bóng và ẨN nếu bằng 0
+    const allCounts = [cartCount, mobileCartCount, burgerCartCount];
+    allCounts.forEach(el => {
+        if (el) { // Kiểm tra xem element có tồn tại không
+            if (totalItems > 0) {
+                el.textContent = totalItems;
+                el.style.display = 'flex'; 
+            } else {
+                el.textContent = '0';
+                el.style.display = 'none'; // Ẩn đi nếu không có gì
+            }
+        }
+    });
 
     // Tính tổng các món ĐÃ CHỌN
     cartTotal = cart
@@ -940,8 +954,16 @@ function loginWithGoogle() {
       });
 }
 
+// ⭐ HÀM LOGOUT ĐÃ ĐƯỢC SỬA (hàm comment đã được dời ra ngoài)
 function logout() {
-  // ⭐ HÀM MỚI 1: GỬI BÌNH LUẬN
+    auth.signOut().then(() => {
+      showNotification("Bạn đã đăng xuất.");
+    }).catch((error) => {
+      console.error("Lỗi đăng xuất:", error);
+    });
+}
+
+// ⭐ HÀM BÌNH LUẬN 1 (Đã dời ra ngoài)
 async function handleCommentSubmit(event) {
   event.preventDefault();
   const user = auth.currentUser;
@@ -992,7 +1014,7 @@ async function handleCommentSubmit(event) {
   }
 }
 
-// ⭐ HÀM MỚI 2: TẢI BÌNH LUẬN
+// ⭐ HÀM BÌNH LUẬN 2 (Đã dời ra ngoài)
 async function loadComments() {
   const listContainer = document.getElementById('customer-comments-list');
   if (!listContainer) return;
@@ -1040,15 +1062,9 @@ async function loadComments() {
     listContainer.innerHTML = '<p class="text-center text-red-500">Không thể tải bình luận. Vui lòng thử lại.</p>';
   }
 }
-    auth.signOut().then(() => {
-      showNotification("Bạn đã đăng xuất.");
-    }).catch((error) => {
-      console.error("Lỗi đăng xuất:", error);
-    });
-}
 
-// ⭐ HÀM NÀY ĐÃ SỬA: Gộp giỏ hàng (merge 'selected') và tải giỏ hàng Guest
-// ⭐ THAY THẾ HÀM NÀY:
+
+// ⭐ HÀM NÀY ĐÃ SỬA: Thêm logic ẨN/HIỆN form bình luận
 auth.onAuthStateChanged(async (user) => {
     
     const loginButton = document.getElementById('login-button');
@@ -1075,7 +1091,25 @@ auth.onAuthStateChanged(async (user) => {
       // (Phần merge giỏ hàng... giữ nguyên)
       const serverCart = await loadCartForUser(user.uid);
       const guestCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
-      // ... (code merge giỏ hàng) ...
+      
+      const merged = {};
+      function addItemsToMap(items) {
+          (items || []).forEach(i => {
+              if (i.price && i.quantity) { i.subtotal = i.price * i.quantity; }
+              if (!merged[i.name]) {
+                  merged[i.name] = { ...i, selected: i.selected || false }; 
+              } else {
+                  merged[i.name].quantity += i.quantity;
+                  if (merged[i.name].price && merged[i.name].quantity) {
+                      merged[i.name].subtotal = merged[i.name].price * merged[i.name].quantity;
+                  }
+                  merged[i.name].selected = i.selected || merged[i.name].selected;
+              }
+          });
+      }
+      addItemsToMap(serverCart);
+      addItemsToMap(guestCart);
+
       cart = Object.values(merged);
       saveCartForUser(user.uid);
       localStorage.removeItem('guestCart');
@@ -1116,10 +1150,5 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', updateActiveNavLink);
     updateActiveNavLink(); // Initial call
     renderProducts(productsData); // Hiển thị sản phẩm
-  loadComments(); // Tải bình luận ngay khi trang được mở
+    loadComments(); // Tải bình luận ngay khi trang được mở
 });
-
-
-
-
-
