@@ -85,3 +85,28 @@ scroll-margin-top: 80px;
 }
 
 @view-transition { navigation: auto; }
+
+/* Tùy chỉnh checkbox trong giỏ hàng */
+#cart-items input[type="checkbox"] {
+  height: 1.25rem; /* 20px */
+  width: 1.25rem; /* 20px */
+  border-radius: 0.25rem; /* 4px */
+  border-color: #D1D5DB; /* border-gray-300 */
+  color: #7C3AED; /* text-purple-600 */
+  margin-right: 0.75rem; /* mr-3 */
+  margin-top: 0.25rem; /* mt-1 */
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+#cart-items input[type="checkbox"]:focus {
+  outline: none;
+  ring: 2px;
+  ring-offset: 0;
+  ring-color: #A78BFA; /* ring-purple-400 */
+}
+
+/* Tùy chỉnh nút thanh toán khi bị vô hiệu hóa (Giữ nguyên) */
+#checkout-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
