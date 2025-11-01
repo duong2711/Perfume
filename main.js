@@ -112,7 +112,9 @@ function checkout(itemsToCheckout) {
   checkoutModal.className = 'fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50';
   checkoutModal.innerHTML = `
     <div class="bg-white p-6 rounded-2xl shadow-xl max-w-md w-full relative animate-fadeIn">
-      <button onclick="this.closest('.fixed').remove()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">&times;</button>
+      <button onclick="this.closest('.fixed').remove()" class="absolute top-3 right-3 p-2 hover:bg-gray-100 rounded-full text-gray-500 hover:text-gray-800">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
       <h2 class="text-xl font-semibold mb-4 text-purple-700">Thông tin thanh toán</h2>
 
       <form id="checkout-form" class="space-y-4">
