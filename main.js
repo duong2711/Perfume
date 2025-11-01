@@ -709,20 +709,6 @@ function focusProduct(productName) {
     setTimeout(() => focusProduct(productName), 600);
   }
 }
-
-// Form handlers
-function handleNewsletter(event) {
-event.preventDefault();
-const messageEl = document.getElementById('newsletter-message');
-const form = event.target;
-const email = form.querySelector('input[type="email"]').value;
-messageEl.textContent = `Cảm ơn bạn! Chúng tôi sẽ gửi thông tin cập nhật đến ${email}`;
-messageEl.style.color = '#10b981';
-form.reset();
-setTimeout(() => {
-messageEl.textContent = '';
-}, 500);
-}
 function handleContactForm(event) {
 event.preventDefault();
 const messageEl = document.getElementById('contact-message');
@@ -1048,6 +1034,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateActiveNavLink(); // Initial call
     renderProducts(productsData); // Hiển thị sản phẩm
 });
+
 
 
 
