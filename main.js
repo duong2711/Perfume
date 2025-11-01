@@ -709,17 +709,6 @@ function focusProduct(productName) {
     setTimeout(() => focusProduct(productName), 600);
   }
 }
-function handleContactForm(event) {
-event.preventDefault();
-const messageEl = document.getElementById('contact-message');
-const form = event.target;
-messageEl.textContent = 'Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi trong vòng 24 giờ.';
-messageEl.style.color = '#10b981';
-form.reset();
-setTimeout(() => {
-messageEl.textContent = '';
-}, 500);
-}
 // Policy links
 function showPolicy(policyType) {
 const policies = {
@@ -952,6 +941,105 @@ function loginWithGoogle() {
 }
 
 function logout() {
+  // ⭐ HÀM MỚI 1: GỬI BÌNH LUẬN
+async function handleCommentSubmit(event) {
+  event.preventDefault();
+  const user = auth.currentUser;
+  const form = document.getElementById('comment-form');
+  const textInput = document.getElementById('comment-text');
+  const messageEl = document.getElementById('comment-message');
+  const submitButton = document.getElementById('comment-submit-button');
+
+  if (!user) {
+    messageEl.textContent = 'Bạn phải đăng nhập để gửi.';
+    messageEl.style.color = '#ef4444'; // (Màu đỏ)
+    return;
+  }
+
+  const commentText = textInput.value.trim();
+  if (commentText.length < 10) {
+    messageEl.textContent = 'Bình luận phải có ít nhất 10 ký tự.';
+    messageEl.style.color = '#ef4444'; // (Màu đỏ)
+    return;
+  }
+
+  submitButton.disabled = true;
+  submitButton.textContent = 'Đang gửi...';
+
+  try {
+    const commentData = {
+      name: user.displayName,
+      photoURL: user.photoURL, // Lấy ảnh avatar Google
+      text: commentText,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    // Lưu vào collection mới tên là "comments"
+    await db.collection('comments').add(commentData);
+    
+    messageEl.textContent = 'Cảm ơn bạn đã để lại bình luận!';
+    messageEl.style.color = '#10b981'; // (Màu xanh)
+    form.reset();
+    loadComments(); // Tải lại danh sách bình luận
+
+  } catch (err) {
+    console.error("Lỗi khi gửi bình luận:", err);
+    messageEl.textContent = 'Gửi bình luận thất bại. Vui lòng thử lại.';
+    messageEl.style.color = '#ef4444'; // (Màu đỏ)
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = 'Gửi bình luận';
+  }
+}
+
+// ⭐ HÀM MỚI 2: TẢI BÌNH LUẬN
+async function loadComments() {
+  const listContainer = document.getElementById('customer-comments-list');
+  if (!listContainer) return;
+
+  listContainer.innerHTML = '<p class="text-center text-gray-500">Đang tải bình luận...</p>';
+
+  try {
+    const querySnapshot = await db.collection('comments')
+                                  .orderBy('createdAt', 'desc')
+                                  .limit(20) // Lấy 20 bình luận mới nhất
+                                  .get();
+    
+    if (querySnapshot.empty) {
+      listContainer.innerHTML = '<p class="text-center text-gray-500">Chưa có bình luận nào. Hãy là người đầu tiên!</p>';
+      return;
+    }
+
+    let html = '';
+    querySnapshot.forEach(doc => {
+      const comment = doc.data();
+      const date = comment.createdAt ? comment.createdAt.toDate().toLocaleDateString('vi-VN') : 'Vừa xong';
+      const avatarName = comment.name ? comment.name.charAt(0).toUpperCase() : '?';
+
+      const avatarHtml = comment.photoURL 
+        ? `<div class="comment-avatar"><img src="${comment.photoURL}" alt="${comment.name}"></div>`
+        : `<div class="comment-avatar-placeholder"><span>${avatarName}</span></div>`;
+
+      html += `
+        <div class="comment-card">
+          ${avatarHtml}
+          <div class="comment-body">
+            <div class="comment-header">
+              <span class="comment-name">${comment.name}</span>
+              <span class="comment-date">${date}</span>
+            </div>
+            <p class="comment-text">${comment.text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+          </div>
+        </div>
+      `;
+    });
+    listContainer.innerHTML = html;
+
+  } catch (err) {
+    console.error("Lỗi tải bình luận:", err);
+    listContainer.innerHTML = '<p class="text-center text-red-500">Không thể tải bình luận. Vui lòng thử lại.</p>';
+  }
+}
     auth.signOut().then(() => {
       showNotification("Bạn đã đăng xuất.");
     }).catch((error) => {
@@ -960,15 +1048,21 @@ function logout() {
 }
 
 // ⭐ HÀM NÀY ĐÃ SỬA: Gộp giỏ hàng (merge 'selected') và tải giỏ hàng Guest
+// ⭐ THAY THẾ HÀM NÀY:
 auth.onAuthStateChanged(async (user) => {
-        
+    
     const loginButton = document.getElementById('login-button');
     const userInfoDiv = document.getElementById('user-info');
     const mobileLoginButton = document.getElementById('mobile-login-button');
     const mobileUserInfoDiv = document.getElementById('mobile-user-info');
+    
+    // ⭐ Lấy các element của form bình luận
+    const commentFormContainer = document.getElementById('comment-form-container');
+    const commentForm = document.getElementById('comment-form');
+    const commentLoginNotice = document.getElementById('comment-login-notice');
 
     if (user) {
-      // ========= 1. USER ĐĂNG NHẬP =========
+      // (Phần UI Login... giữ nguyên)
       loginButton.classList.add('hidden');
       userInfoDiv.classList.remove('hidden');
       userInfoDiv.classList.add('flex');
@@ -978,38 +1072,22 @@ auth.onAuthStateChanged(async (user) => {
       document.getElementById('user-name').textContent = user.displayName;
       document.getElementById('mobile-user-name').textContent = user.displayName;
 
-      // XỬ LÝ GIỎ HÀNG (CẬP NHẬT)
+      // (Phần merge giỏ hàng... giữ nguyên)
       const serverCart = await loadCartForUser(user.uid);
       const guestCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
-      const merged = {};
-
-      function addItemsToMap(items) {
-          (items || []).forEach(i => {
-              if (i.price && i.quantity) {
-                  i.subtotal = i.price * i.quantity;
-              }
-              
-              if (!merged[i.name]) {
-                  merged[i.name] = { ...i, selected: i.selected || false }; 
-              } else {
-                  merged[i.name].quantity += i.quantity;
-                  if (merged[i.name].price && merged[i.name].quantity) {
-                      merged[i.name].subtotal = merged[i.name].price * merged[i.name].quantity;
-                  }
-                  // Ưu tiên trạng thái selected của giỏ khách (vì mới hơn)
-                  merged[i.name].selected = i.selected || merged[i.name].selected;
-              }
-          });
-      }
-      addItemsToMap(serverCart);
-      addItemsToMap(guestCart);
-
+      // ... (code merge giỏ hàng) ...
       cart = Object.values(merged);
       saveCartForUser(user.uid);
       localStorage.removeItem('guestCart');
       
+      // ⭐ Hiện form bình luận
+      if (commentFormContainer) {
+          commentLoginNotice.classList.add('hidden');
+          commentForm.classList.remove('hidden');
+      }
+      
     } else {
-      // ========= 2. USER ĐĂNG XUẤT / KHÁCH =========
+      // (Phần UI Logout... giữ nguyên)
       loginButton.classList.remove('hidden');
       loginButton.classList.add('flex');
       userInfoDiv.classList.add('hidden');
@@ -1018,11 +1096,16 @@ auth.onAuthStateChanged(async (user) => {
       mobileUserInfoDiv.classList.add('hidden');
       mobileUserInfoDiv.classList.remove('flex');
 
-      // Lấy giỏ hàng của khách từ localStorage
+      // (Phần giỏ hàng Guest... giữ nguyên)
       cart = JSON.parse(localStorage.getItem('guestCart') || '[]');
+
+      // ⭐ Ẩn form bình luận, hiện thông báo
+      if (commentFormContainer) {
+          commentLoginNotice.classList.remove('hidden');
+          commentForm.classList.add('hidden');
+      }
     }
 
-    // Cập nhật giỏ hàng (tính lại tổng tiền, bật/tắt nút)
     updateCartDisplay();
 });
 
@@ -1033,7 +1116,9 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', updateActiveNavLink);
     updateActiveNavLink(); // Initial call
     renderProducts(productsData); // Hiển thị sản phẩm
+  loadComments(); // Tải bình luận ngay khi trang được mở
 });
+
 
 
 
