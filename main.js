@@ -148,7 +148,7 @@ function checkout(itemsToCheckout) {
             <div id="momo-info" class="hidden bg-gray-50 border p-2 rounded text-sm">
               📱 0988007529<br>
               👤 LÊ ĐẠI DƯƠNG<br>
-              <img src="https://i.postimg.cc/nzymLcRf/97f5d400-3296-4151-9478-cc01e923681c.jpg" alt="QR Momo" class="w-40 mt-2 rounded-lg">
+              <img src="https://i.postimg.cc/7hpQJZs9/Picture1.png" alt="QR Momo" class="w-40 mt-2 rounded-lg">
             </div>
           </div>
         </div>
@@ -166,6 +166,7 @@ function checkout(itemsToCheckout) {
   radios.forEach(radio => {
     radio.addEventListener('change', () => {
       checkoutModal.querySelector('#bank-info').classList.toggle('hidden', radio.value !== 'Chuyển khoản ngân hàng');
+      checkoutModal.querySelector('#momo-info').classList.toggle('hidden', radio.value !== 'Ví Momo');
     });
   });
 
@@ -1036,4 +1037,5 @@ document.addEventListener('DOMContentLoaded', () => {
     updateActiveNavLink(); // Initial call
     renderProducts(productsData); // Hiển thị sản phẩm
 });
+
 
