@@ -166,7 +166,6 @@ function checkout(itemsToCheckout) {
   radios.forEach(radio => {
     radio.addEventListener('change', () => {
       checkoutModal.querySelector('#bank-info').classList.toggle('hidden', radio.value !== 'Chuyển khoản ngân hàng');
-      checkoutModal.querySelector('#momo-info').classList.toggle('hidden', radio.value !== 'Ví Momo');
     });
   });
 
@@ -1037,3 +1036,4 @@ document.addEventListener('DOMContentLoaded', () => {
     updateActiveNavLink(); // Initial call
     renderProducts(productsData); // Hiển thị sản phẩm
 });
+
