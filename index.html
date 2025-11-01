@@ -133,6 +133,12 @@ scroll-margin-top: 80px;
             </svg>
         </button>
 
+        <button class="flex p-2 hover:bg-gray-100 rounded-full transition-colors relative" onclick="loadOrderHistory()">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        </button>
+
         <button class="flex p-2 hover:bg-gray-100 rounded-full transition-colors relative" onclick="toggleCart()">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0h8m-8 0a2 2 0 100 4 2 2 0 000-4zm8 0a2 2 0 100 4 2 2 0 000-4z"></path>
             </svg>
@@ -579,7 +585,7 @@ Bộ Công Thương
         <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col">
             <div class="p-6 border-b flex-shrink-0">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-bold text-gray-900">Giỏ hàng</h3><button onclick="toggleCart()" class="p-2 hover:bg-gray-100 rounded-full">
+                  <h3 class="text-xl font-bold text-gray-900">Giỏ hàng</h3><button onclick="toggleCart()" class="p-2 hover:bg-gray-100 rounded-full">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg></button>
                 </div>
@@ -616,6 +622,24 @@ Bộ Công Thương
 </div>
 </div>
 
+<div id="history-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="p-6 border-b flex-shrink-0">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-900">Lịch sử đặt hàng</h3>
+                    <button onclick="toggleHistoryModal()" class="p-2 hover:bg-gray-100 rounded-full">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div id="history-items" class="p-6 flex-1 overflow-y-auto space-y-4">
+                <p class="text-gray-500 text-center">Bạn chưa có đơn hàng nào.</p>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 <script>
 // Default configuration
@@ -718,6 +742,8 @@ function handleCheckout2() {
   }
   checkout(); // Gọi form EmailJS mới
 }
+
+// *** HÀM CHECKOUT ĐÃ SỬA LỖI EMAILJS + THÊM LỊCH SỬ ***
 function checkout() {
   const checkoutModal = document.createElement('div');
   checkoutModal.className = 'fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50';
@@ -781,14 +807,17 @@ function checkout() {
 
   // 📧 Gửi email qua EmailJS
   const form = checkoutModal.querySelector('#checkout-form');
-  form.addEventListener('submit', function(e) {
+  
+  // Thêm "async" vào đây
+  form.addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    const name = document.getElementById('checkout-name').value.trim();
-    const phone = document.getElementById('checkout-phone').value.trim();
-    const address = document.getElementById('checkout-address').value.trim();
-    const note = document.getElementById('checkout-note').value.trim();
-    const payment = document.querySelector('input[name="checkout-payment"]:checked').value;
+    // Sửa lỗi: Dùng "form.querySelector" để lấy đúng dữ liệu
+    const name = form.querySelector('#checkout-name').value.trim();
+    const phone = form.querySelector('#checkout-phone').value.trim();
+    const address = form.querySelector('#checkout-address').value.trim();
+    const note = form.querySelector('#checkout-note').value.trim();
+    const payment = form.querySelector('input[name="checkout-payment"]:checked').value;
 
     const cartItems = cart.map(item => `${item.name} - SL: ${item.quantity} x ${formatPrice(item.price)}`).join('\n');
     const total = formatPrice(cart.reduce((sum, item) => sum + item.price * item.quantity, 0));
@@ -802,21 +831,51 @@ function checkout() {
       checkout_cart: cartItems,
       checkout_total: total
     };
-    emailjs.init("W9rFfW9hW_748etKm");
+    
+    // Gửi mail (giữ nguyên)
     emailjs.send("service_h8tuoqb", "template_t1612tv", templateParams)
-      .then(() => {
+      .then(async () => { // <-- Thêm "async" ở đây
         alert('🎉 Đơn hàng đã được gửi thành công! Bạn sẽ nhận email xác nhận sớm.');
+        
+        // *** BẮT ĐẦU CODE MỚI: LƯU LỊCH SỬ ĐƠN HÀNG ***
+        const user = auth.currentUser;
+        if (user) {
+          try {
+            // Chuẩn bị dữ liệu đơn hàng để lưu
+            const orderData = {
+              customerInfo: templateParams, // Lưu info khách
+              items: cart, // Lưu mảng giỏ hàng
+              totalAmount: cart.reduce((sum, item) => sum + item.subtotal, 0),
+              createdAt: firebase.firestore.FieldValue.serverTimestamp() // Lưu ngày đặt
+            };
+            
+            // Lưu vào sub-collection "orders" của user
+            await db.collection('users').doc(user.uid).collection('orders').add(orderData);
+            console.log('Đã lưu đơn hàng vào lịch sử.');
+
+          } catch (err) {
+            console.error("Lỗi khi lưu lịch sử đơn hàng:", err);
+          }
+        }
+        // *** KẾT THÚC CODE MỚI ***
+
         checkoutModal.remove();
         cart = [];
-        updateCartDisplay(); // <<< SỬA LỖI Ở ĐÂY
+        updateCartDisplay(); 
+        
+        if (user) {
+            saveCartForUser(user.uid); // Lưu giỏ hàng rỗng (đã có)
+        }
       })
       .catch(err => {
         console.error('Lỗi gửi email:', err);
         alert('❌ Gửi email thất bại. Vui lòng thử lại.');
       });
   });
-}
+} // <-- HÀM CHECKOUT KẾT THÚC Ở ĐÂY
 
+
+// *** CÁC HÀM RENDER SẢN PHẨM PHẢI NẰM BÊN NGOÀI ***
 
 function renderProductCard(product) {
     // Hàm này tạo ra HTML cho một sản phẩm từ mảng data
@@ -1010,6 +1069,82 @@ function toggleCart() {
 const cartModal = document.getElementById('cart-modal');
 cartModal.classList.toggle('hidden');
 }
+
+// *** CÁC HÀM XEM LỊCH SỬ ***
+
+function toggleHistoryModal() {
+    const historyModal = document.getElementById('history-modal');
+    historyModal.classList.toggle('hidden');
+}
+
+async function loadOrderHistory() {
+    const user = auth.currentUser;
+    const historyItemsContainer = document.getElementById('history-items');
+    
+    if (!user) {
+        historyItemsContainer.innerHTML = '<p class="text-gray-500 text-center">Bạn cần đăng nhập để xem lịch sử.</p>';
+        toggleHistoryModal(); // Mở modal để báo lỗi
+        return;
+    }
+
+    // Hiển thị modal và thông báo đang tải
+    historyItemsContainer.innerHTML = '<p class="text-gray-500 text-center">Đang tải lịch sử...</p>';
+    toggleHistoryModal();
+
+    try {
+        // Truy vấn 20 đơn hàng gần nhất
+        const querySnapshot = await db.collection('users').doc(user.uid).collection('orders')
+                                    .orderBy('createdAt', 'desc') // Sắp xếp mới nhất lên đầu
+                                    .limit(20) 
+                                    .get();
+
+        if (querySnapshot.empty) {
+            historyItemsContainer.innerHTML = '<p class="text-gray-500 text-center">Bạn chưa có đơn hàng nào.</p>';
+            return;
+        }
+
+        let html = '';
+        querySnapshot.forEach(doc => {
+            const order = doc.data();
+            
+            // Format ngày tháng (cần 1 hàm helper)
+            const date = order.createdAt ? order.createdAt.toDate().toLocaleDateString('vi-VN') : 'N/A';
+            
+            // Tạo HTML cho từng sản phẩm trong đơn
+            const itemsHtml = order.items.map(item => `
+                <div class="flex items-center justify-between text-sm">
+                    <p class="truncate pr-2">${item.name} (x${item.quantity})</p>
+                    <p class="font-medium flex-shrink-0">${formatPrice(item.subtotal)}</p>
+                </div>
+            `).join('');
+
+            // Tạo HTML cho cả thẻ đơn hàng
+            html += `
+                <div class="border border-gray-200 rounded-lg p-4 space-y-2 shadow-sm">
+                    <div class="flex justify-between items-center pb-2 border-b">
+                        <p class="font-bold text-lg text-purple-600">${formatPrice(order.totalAmount)}</p>
+                        <p class="text-xs text-gray-500">${date}</p>
+                    </div>
+                    <div class="space-y-1 max-h-32 overflow-y-auto pr-1">
+                        ${itemsHtml}
+                    </div>
+                    <div class="text-xs text-gray-600 pt-2 border-t mt-2">
+                        <p><strong>Giao đến:</strong> ${order.customerInfo.checkout_name}, ${order.customerInfo.checkout_address}</p>
+                    </div>
+                </div>
+            `;
+        });
+
+        historyItemsContainer.innerHTML = html; // Hiển thị các đơn hàng
+
+    } catch (err) {
+        console.error("Lỗi tải lịch sử:", err);
+        historyItemsContainer.innerHTML = '<p class="text-red-500 text-center">Lỗi khi tải lịch sử. Vui lòng thử lại.</p>';
+    }
+}
+// *** KẾT THÚC HÀM LỊCH SỬ ***
+
+
   // *** MÃ JAVASCRIPT CHO MODAL TÌM KIẾM (BỊ THIẾU) ***
 function toggleSearchModal() {
     const searchModal = document.getElementById('search-modal');
@@ -1053,7 +1188,7 @@ function performSearch() {
   const normalizedTerm = normalize(searchTerm);
 
   // Lọc linh hoạt theo tên + mô tả
-  const searchResults = productsData.filter(product => {
+  const productsData = productsData.filter(product => {
     const name = normalize(product.name);
     const desc = normalize(product.desc);
     return (
@@ -1312,7 +1447,7 @@ function mapToEditPanelValues(config) {
 return new Map([
 ["store_name", config.store_name || defaultConfig.store_name],
 ["tagline", config.tagline || defaultConfig.tagline],
-["hero_title", config.hero_title || defaultConfig.hero_title],
+["hero_title", config" : config.hero_title || defaultConfig.hero_title],
 ["hero_subtitle", config.hero_subtitle || defaultConfig.hero_subtitle],
 ["cta_button", config.cta_button || defaultConfig.cta_button],
 ["phone_number", config.phone_number || defaultConfig.phone_number],
@@ -1341,14 +1476,15 @@ renderProducts(productsData); // <<< TỰ ĐỘNG HIỂN THỊ SẢN PHẨM KHI 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script>
   // *** ĐÂY LÀ MÃ CẤU HÌNH CỦA BẠN (firebaseConfig) ***
+  // *** ĐÃ CẬP NHẬT VỚI DỰ ÁN MỚI CỦA BẠN ***
   const firebaseConfig = {
-    apiKey: "AIzaSyCpN2sFWa5h-hJkWTSPAaGLFz_g2bRz2kI",
-    authDomain: "tap-hoa-sinh-vien.firebaseapp.com",
-    projectId: "tap-hoa-sinh-vien",
-    storageBucket: "tap-hoa-sinh-vien.firebasestorage.app",
-    messagingSenderId: "744293953875",
-    appId: "1:744293953875:web:5e75ebbc2202f4519071a6",
-    measurementId: "G-4PDW6ZGK90"
+    apiKey: "AIzaSyDOSTp5iDf7f4FVfOKeqtmFgMlKL9mdXFI",
+    authDomain: "taphoasinhvien-48e28.firebaseapp.com",
+    projectId: "taphoasinhvien-48e28",
+    storageBucket: "taphoasinhvien-48e28.firebasestorage.app",
+    messagingSenderId: "1060888508273",
+    appId: "1:1060888508273:web:53443305cba0a7f6ff28d0",
+    measurementId: "G-T61L369KG7"
   };
 
   // Khởi tạo Firebase
@@ -1360,8 +1496,9 @@ const db = firebase.firestore();
 async function saveCartForUser(uid) {
   if (!uid) return;
   try {
-    await db.collection('carts').doc(uid).set({
-      items: cart,
+    // Sửa: Dùng db.collection('users').doc(uid)
+    await db.collection('users').doc(uid).set({
+      cart: cart, // Lưu vào trường 'cart'
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
   } catch (err) {
@@ -1373,9 +1510,10 @@ async function saveCartForUser(uid) {
 async function loadCartForUser(uid) {
   if (!uid) return [];
   try {
-    const doc = await db.collection('carts').doc(uid).get();
-    if (doc.exists) {
-      return doc.data().items || [];
+    // Sửa: Dùng db.collection('users').doc(uid)
+    const doc = await db.collection('users').doc(uid).get();
+    if (doc.exists && doc.data().cart) {
+      return doc.data().cart || []; // Lấy từ trường 'cart'
     } else {
       return [];
     }
@@ -1447,10 +1585,17 @@ async function loadCartForUser(uid) {
       const merged = {};
       function addItemsToMap(items) {
         (items || []).forEach(i => {
+          // Tính lại subtotal khi tải
+          if (i.price && i.quantity) {
+              i.subtotal = i.price * i.quantity;
+          }
+          
           if (!merged[i.name]) merged[i.name] = { ...i };
           else {
             merged[i.name].quantity += i.quantity;
-            merged[i.name].subtotal = merged[i.name].price * merged[i.name].quantity;
+            if (merged[i.name].price && merged[i.name].quantity) {
+                merged[i.name].subtotal = merged[i.name].price * merged[i.name].quantity;
+            }
           }
         });
       }
@@ -1488,5 +1633,6 @@ async function loadCartForUser(uid) {
 
 </script>
 
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9967da13e3755c30',t:'MTc2MTc5NTIxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9967da13e3755c30',t:'MTc2MTc5NTIxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;
+a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
