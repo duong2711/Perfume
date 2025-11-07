@@ -80,9 +80,16 @@ const productsData = [
   }
 ];
 
+// [CẬP NHẬT] BIẾN TRẠNG THÁI PHÂN TRANG
+let currentFilteredProducts = [...productsData]; // Bắt đầu với tất cả sản phẩm
+let currentPage = 1;
+
 // Shopping cart
 let cart = [];
 let cartTotal = 0;
+
+// [THÊM MỚI] BIẾN TOÀN CỤC CHO ĐÁNH GIÁ SAO
+let currentRating = 0;
 
 // Mobile menu toggle (Sửa lỗi logic)
 function toggleMobileMenu() {
@@ -270,34 +277,39 @@ function checkout(itemsToCheckout) {
 
 // *** CÁC HÀM RENDER SẢN PHẨM ***
 
+// [ĐÃ CẬP NHẬT] HÀM RENDERPRODUCTCARD VỚI LAYOUT MỚI
 function renderProductCard(product) {
     // Hàm này tạo ra HTML cho một sản phẩm từ mảng data
     return `
-        <div class="group cursor-pointer bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 product-card" data-category="${product.category}" data-name="${product.name.toLowerCase()}">
-            <div class="relative overflow-hidden rounded-t-2xl aspect-square bg-gradient-to-br from-${product.color}-100 to-${product.color}-200">
-                <div class="w-full h-full flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                    <div class="perfume-bottle w-32 h-40 shimmer">
-                        <div class="absolute top-2 left-1/2 transform -translate-x-1/2 w-4 h-6 bg-gradient-to-b from-gray-300 to-gray-400 rounded-t"></div>
-                        <div class="absolute top-8 left-1/2 transform -translate-x-1/2 w-16 h-24 bg-gradient-to-b from-${product.color}-300 to-${product.color}-500 rounded opacity-80"></div>
+        <div class="group cursor-pointer bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 product-card flex flex-col" data-category="${product.category}" data-name="${product.name.toLowerCase()}">
+            
+            <div class="relative overflow-hidden rounded-t-2xl aspect-square bg-gray-50">
+                
+                <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                
+                <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                    <div class="bg-${product.category === 'nam' ? 'blue' : product.category === 'nu' ? 'pink' : 'green'}-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
+                        ${product.category === 'nam' ? 'Nam' : product.category === 'nu' ? 'Nữ' : 'Unisex'}
                     </div>
-                </div>
-                ${product.tag ? `<div class="absolute top-4 right-4 bg-gray-900 text-white px-2 py-1 rounded-full text-xs font-semibold">${product.tag}</div>` : ''}
-                <div class="absolute top-4 left-4 bg-${product.category === 'nam' ? 'blue' : product.category === 'nu' ? 'pink' : 'green'}-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                    ${product.category === 'nam' ? 'Nam' : product.category === 'nu' ? 'Nữ' : 'Unisex'}
+                    ${product.tag ? `<div class="bg-gray-900 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">${product.tag}</div>` : ''}
                 </div>
             </div>
-            <div class="p-6 space-y-3">
+
+            <div class="p-6 space-y-3 flex flex-col flex-1">
                 <h4 class="text-xl font-semibold text-gray-900">${product.name}</h4>
                 <p class="text-gray-600 text-sm">${product.desc}</p>
-                <div class="flex items-center justify-between">
-                    <span class="text-2xl font-bold text-purple-600">
+                
+                <div class="flex-grow"></div> 
+
+                <div class="space-y-3 mt-4">
+                    <span class="text-2xl font-bold text-purple-600 block">
                         ${formatPrice(product.price)}
                     </span> 
-                    <button class="px-4 py-2 bg-purple-600 text-white rounded-full text-sm font-semibold hover:bg-purple-700 transition-colors whitespace-nowrap flex-shrink-0"
-        onclick="addToCart('${product.name}', ${product.price}, this)"
-        data-image="${product.image}">
-  Thêm vào giỏ
-</button>
+                    <button class="w-full px-4 py-3 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-700 transition-colors whitespace-nowrap"
+                        onclick="addToCart('${product.name}', ${product.price}, this)"
+                        data-image="${product.image}">
+                        Thêm vào giỏ
+                    </button>
                 </div>
             </div>
         </div>
@@ -311,6 +323,7 @@ function renderProducts(productsToRender) {
     }
 }
 
+// [ĐÃ CẬP NHẬT] HÀM FILTER SẢN PHẨM (CÓ HIỆU ỨNG CHUYỂN)
 function filterProducts(btnElement, category) {
   const buttons = document.querySelectorAll('#filter-buttons button');
   buttons.forEach(btn => {
@@ -321,8 +334,127 @@ function filterProducts(btnElement, category) {
   btnElement.classList.add('simple-button');
   btnElement.classList.remove('simple-button-outline');
 
-  const filtered = productsData.filter(p => category === 'all' || p.category === category);
-  renderProducts(filtered);
+  // Logic lọc
+  if (category === 'all') {
+    currentFilteredProducts = [...productsData];
+  } else {
+    currentFilteredProducts = productsData.filter(p => p.category === category);
+  }
+  
+  currentPage = 1; // Luôn quay về trang 1 khi đổi bộ lọc
+  
+  // [CẬP NHẬT] Áp dụng View Transition khi lọc
+  if (!document.startViewTransition) {
+      displayCurrentPage(); // Chạy như cũ nếu không hỗ trợ
+  } else {
+      // Bọc hàm render trong transition để tạo hiệu ứng
+      document.startViewTransition(() => {
+          displayCurrentPage();
+      });
+  }
+}
+
+
+// [ĐÃ THÊM MỚI] HÀM LẤY SỐ LƯỢNG SẢN PHẨM/TRANG (RESPONSIVE)
+function getItemsPerPage() {
+    if (window.innerWidth < 640) { // 640px là breakpoint 'sm' của Tailwind
+        return 4; // 4 sản phẩm cho điện thoại
+    } else {
+        return 6; // 6 sản phẩm cho desktop/tablet
+    }
+}
+
+// [ĐÃ CẬP NHẬT] HÀM CHUYỂN TRANG (CÓ HIỆU ỨNG)
+function goToPage(pageNumber) {
+    currentPage = pageNumber;
+
+    // Tách hàm cuộn ra
+    const scrollProductsIntoView = () => {
+        const productsSection = document.getElementById('products');
+        if (productsSection) {
+            productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
+    // Kiểm tra trình duyệt có hỗ trợ View Transitions API không
+    if (!document.startViewTransition) {
+        // 1. Nếu không, chạy như cũ
+        displayCurrentPage(); // Cập nhật DOM
+        scrollProductsIntoView(); // Cuộn
+        return;
+    }
+
+    // 2. Nếu có, bọc hàm cập nhật DOM trong transition
+    const transition = document.startViewTransition(() => {
+        displayCurrentPage();
+    });
+
+    // Đợi transition (hiệu ứng) hoàn thành rồi mới cuộn
+    transition.finished.then(scrollProductsIntoView);
+}
+
+/**
+ * Hàm này tạo ra các nút bấm 1, 2, 3...
+ */
+function renderPagination(totalPages) {
+    const container = document.getElementById('pagination-container');
+    if (!container) return;
+    
+    container.innerHTML = ''; // Xóa các nút cũ
+
+    // Không hiển thị số trang nếu chỉ có 1 trang
+    if (totalPages <= 1) return;
+
+    for (let i = 1; i <= totalPages; i++) {
+        const isActive = (i === currentPage);
+        const button = document.createElement('button');
+        button.innerText = i;
+        button.onclick = () => goToPage(i);
+        
+        // Dùng class từ style.css
+        button.className = isActive 
+            ? 'pagination-button active' 
+            : 'pagination-button';
+        
+        container.appendChild(button);
+    }
+}
+
+/**
+ * Hàm render chính MỚI:
+ */
+function displayCurrentPage() {
+    const grid = document.getElementById('products-grid');
+    if (!grid) return; // Kiểm tra
+
+    // [CẬP NHẬT] Lấy số lượng sản phẩm/trang một cách "động"
+    const itemsPerPage = getItemsPerPage();
+
+    // Tính tổng số trang
+    const totalPages = Math.ceil(currentFilteredProducts.length / itemsPerPage);
+    
+    // Xử lý nếu trang hiện tại vượt quá tổng số trang (xảy ra khi resize)
+    if (currentPage > totalPages && totalPages > 0) {
+        currentPage = totalPages;
+    }
+
+    // Nếu không có sản phẩm nào (ví dụ: bộ lọc không kết quả)
+    if (currentFilteredProducts.length === 0) {
+        grid.innerHTML = '<p class="text-gray-500 text-center col-span-2">Không tìm thấy sản phẩm nào.</p>';
+        renderPagination(totalPages); // Render 0 nút
+        return;
+    }
+
+    // Tính toán sản phẩm cần hiển thị
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const productsToDisplay = currentFilteredProducts.slice(startIndex, endIndex);
+
+    // 1. Render sản phẩm (dùng lại hàm renderProducts cũ của bạn)
+    renderProducts(productsToDisplay);
+
+    // 2. Render các nút số trang
+    renderPagination(totalPages);
 }
 
 
@@ -487,9 +619,13 @@ function updateCartDisplay() {
 
                     <div class="flex items-center justify-between mt-3">
                         <div class="flex items-center">
-                            <button onclick="setQuantity('${item.name}', -1)" class="w-6 h-6 bg-gray-200 rounded-full text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center text-lg leading-none">-</button>
+                            
+                            <button onclick="setQuantity('${item.name}', -1)" class="w-6 h-6 bg-gray-200 rounded-full text-gray-700 hover:bg-gray-300 transition-colors flex justify-center text-lg leading-6">-</button>
+                            
                             <span class="mx-2 font-medium">${item.quantity}</span>
-                            <button onclick="setQuantity('${item.name}', 1)" class="w-6 h-6 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors flex items-center justify-center text-lg leading-none">+</button>
+                            
+                            <button onclick="setQuantity('${item.name}', 1)" class="w-6 h-6 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors flex justify-center text-lg leading-6">+</button>
+                        
                         </div>
                         
                         <div class="text-right flex flex-col items-end flex-shrink-0">
@@ -629,19 +765,6 @@ async function loadOrderHistory() {
 function toggleSearchModal() {
     const searchModal = document.getElementById('search-modal');
     searchModal.classList.toggle('hidden');
-}
-
-// (Hàm này là hàm cũ, có thể xóa đi, vì đã có handleCheckout2())
-function handleCheckout() {
-    if (cart.length === 0) {
-        showNotification('Giỏ hàng trống!');
-        return;
-    }
-    showNotification(`Cảm ơn bạn! Đơn hàng ${formatPrice(cartTotal)} đã được ghi nhận.`);
-    cart = [];
-    cartTotal = 0;
-    updateCartDisplay();
-    toggleCart();
 }
 
 function formatPrice(price) {
@@ -954,7 +1077,6 @@ function loginWithGoogle() {
       });
 }
 
-// ⭐ HÀM LOGOUT ĐÃ ĐƯỢC SỬA (hàm comment đã được dời ra ngoài)
 function logout() {
     auth.signOut().then(() => {
       showNotification("Bạn đã đăng xuất.");
@@ -963,7 +1085,58 @@ function logout() {
     });
 }
 
-// ⭐ HÀM BÌNH LUẬN 1 (Đã dời ra ngoài)
+// [THÊM MỚI] HÀM KHỞI TẠO LOGIC CHO SAO
+function setupStarRating() {
+  const ratingContainer = document.getElementById('comment-rating-input');
+  if (!ratingContainer) return; // Nếu không tìm thấy
+  
+  const labels = ratingContainer.querySelectorAll('.star-label');
+  
+  // Hàm để tô màu sao
+  function highlightStars(value) {
+    labels.forEach(label => {
+      const starValue = parseInt(label.getAttribute('data-star-value'));
+      if (starValue <= value) {
+        label.classList.add('active');
+      } else {
+        label.classList.remove('active');
+      }
+    });
+  }
+
+  // Sự kiện di chuột vào
+  labels.forEach(label => {
+    label.addEventListener('mouseover', () => {
+      const value = parseInt(label.getAttribute('data-star-value'));
+      highlightStars(value);
+    });
+  });
+
+  // Sự kiện di chuột ra khỏi TOÀN BỘ container
+  // Sẽ reset về 0 (nếu chưa click) hoặc về rating đã click
+  ratingContainer.addEventListener('mouseout', () => {
+    highlightStars(currentRating); 
+  });
+
+  // Sự kiện Click
+  labels.forEach(label => {
+    label.addEventListener('click', () => {
+      const value = parseInt(label.getAttribute('data-star-value'));
+      currentRating = value; // Lưu rating đã click
+      
+      // Tìm input tương ứng và check nó
+      const inputToCheck = document.getElementById(`star${value}`);
+      if (inputToCheck) {
+          inputToCheck.checked = true;
+      }
+      
+      highlightStars(currentRating); // Tô màu theo rating đã click
+    });
+  });
+}
+
+
+// [ĐÃ CẬP NHẬT] HÀM GỬI BÌNH LUẬN (DÙNG LOGIC JS MỚI)
 async function handleCommentSubmit(event) {
   event.preventDefault();
   const user = auth.currentUser;
@@ -977,6 +1150,17 @@ async function handleCommentSubmit(event) {
     messageEl.style.color = '#ef4444'; // (Màu đỏ)
     return;
   }
+
+  // [LOGIC LẤY RATING ĐÃ SỬA]
+  const ratingInput = form.querySelector('input[name="comment-rating"]:checked');
+  
+  if (!ratingInput || currentRating === 0) {
+      messageEl.textContent = 'Vui lòng chọn số sao đánh giá.';
+      messageEl.style.color = '#ef4444'; // (Màu đỏ)
+      return;
+  }
+  const rating = parseInt(ratingInput.value);
+  // [KẾT THÚC SỬA]
 
   const commentText = textInput.value.trim();
   if (commentText.length < 10) {
@@ -993,6 +1177,7 @@ async function handleCommentSubmit(event) {
       name: user.displayName,
       photoURL: user.photoURL, // Lấy ảnh avatar Google
       text: commentText,
+      rating: rating, // [THÊM MỚI] Thêm rating vào data
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
     
@@ -1001,7 +1186,16 @@ async function handleCommentSubmit(event) {
     
     messageEl.textContent = 'Cảm ơn bạn đã để lại bình luận!';
     messageEl.style.color = '#10b981'; // (Màu xanh)
-    form.reset();
+    
+    form.reset(); 
+    
+    // [SỬA LẠI LOGIC RESET SAO]
+    currentRating = 0; // Reset biến
+    const labels = form.querySelectorAll('.star-label');
+    labels.forEach(label => label.classList.remove('active')); // Tắt hết sao
+    form.querySelectorAll('input[name="comment-rating"]').forEach(radio => radio.checked = false); // Bỏ check
+    // [KẾT THÚC SỬA]
+
     loadComments(); // Tải lại danh sách bình luận
 
   } catch (err) {
@@ -1010,11 +1204,11 @@ async function handleCommentSubmit(event) {
     messageEl.style.color = '#ef4444'; // (Màu đỏ)
   } finally {
     submitButton.disabled = false;
-    submitButton.textContent = 'Gửi bình luận';
+    submitButton.textContent = 'Gửi đánh giá';
   }
 }
 
-// ⭐ HÀM BÌNH LUẬN 2 (Đã dời ra ngoài)
+// [ĐÃ CẬP NHẬT] HÀM TẢI BÌNH LUẬN (HIỂN THỊ SAO)
 async function loadComments() {
   const listContainer = document.getElementById('customer-comments-list');
   if (!listContainer) return;
@@ -1042,6 +1236,14 @@ async function loadComments() {
         ? `<div class="comment-avatar"><img src="${comment.photoURL}" alt="${comment.name}"></div>`
         : `<div class="comment-avatar-placeholder"><span>${avatarName}</span></div>`;
 
+      // [THÊM MỚI] Tạo HTML cho các ngôi sao
+      let starsHtml = '';
+      if (comment.rating && comment.rating > 0) {
+          // Dùng class "comment-rating" chúng ta đã định nghĩa trong CSS
+          starsHtml = `<div class="comment-rating">${'⭐'.repeat(comment.rating)}</div>`;
+      }
+      // [KẾT THÚC THÊM MỚI]
+
       html += `
         <div class="comment-card">
           ${avatarHtml}
@@ -1050,7 +1252,7 @@ async function loadComments() {
               <span class="comment-name">${comment.name}</span>
               <span class="comment-date">${date}</span>
             </div>
-            <p class="comment-text">${comment.text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+            ${starsHtml} <p class="comment-text">${comment.text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
           </div>
         </div>
       `;
@@ -1064,7 +1266,7 @@ async function loadComments() {
 }
 
 
-// ⭐ HÀM NÀY ĐÃ SỬA: Thêm logic ẨN/HIỆN form bình luận
+// [ĐÃ CẬP NHẬT] HÀM AUTHSTATECHANGED (KHỞI CHẠY JS SAO)
 auth.onAuthStateChanged(async (user) => {
     
     const loginButton = document.getElementById('login-button');
@@ -1072,7 +1274,6 @@ auth.onAuthStateChanged(async (user) => {
     const mobileLoginButton = document.getElementById('mobile-login-button');
     const mobileUserInfoDiv = document.getElementById('mobile-user-info');
     
-    // ⭐ Lấy các element của form bình luận
     const commentFormContainer = document.getElementById('comment-form-container');
     const commentForm = document.getElementById('comment-form');
     const commentLoginNotice = document.getElementById('comment-login-notice');
@@ -1114,10 +1315,11 @@ auth.onAuthStateChanged(async (user) => {
       saveCartForUser(user.uid);
       localStorage.removeItem('guestCart');
       
-      // ⭐ Hiện form bình luận
+      // [CẬP NHẬT] Hiện form bình luận VÀ khởi chạy JS sao
       if (commentFormContainer) {
           commentLoginNotice.classList.add('hidden');
           commentForm.classList.remove('hidden');
+          setupStarRating(); // <-- KHỞI CHẠY JS SAO KHI HIỆN FORM
       }
       
     } else {
@@ -1133,7 +1335,7 @@ auth.onAuthStateChanged(async (user) => {
       // (Phần giỏ hàng Guest... giữ nguyên)
       cart = JSON.parse(localStorage.getItem('guestCart') || '[]');
 
-      // ⭐ Ẩn form bình luận, hiện thông báo
+      // [CẬP NHẬT] Ẩn form bình luận
       if (commentFormContainer) {
           commentLoginNotice.classList.remove('hidden');
           commentForm.classList.add('hidden');
@@ -1143,12 +1345,29 @@ auth.onAuthStateChanged(async (user) => {
     updateCartDisplay();
 });
 
-// *** KHỞI CHẠY LẦN ĐẦU ***
+// [ĐÃ CẬP NHẬT] KHỞI CHẠY LẦN ĐẦU
 document.addEventListener('DOMContentLoaded', () => {
     // Phải chờ DOM load mới chạy các hàm render và update
     updateCartDisplay(); // Cập nhật giỏ hàng (và nút) khi tải trang
     window.addEventListener('scroll', updateActiveNavLink);
     updateActiveNavLink(); // Initial call
-    renderProducts(productsData); // Hiển thị sản phẩm
+    
+    // Gọi hàm phân trang khi tải
+    displayCurrentPage(); 
+
     loadComments(); // Tải bình luận ngay khi trang được mở
+    
+    // [THÊM MỚI] Khởi chạy JS sao (trường hợp user đã login từ trước)
+    setupStarRating();
+
+    // [THÊM MỚI] Listener để tự động cập nhật phân trang khi resize
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        // Đợi 200ms sau khi ngừng resize rồi mới chạy
+        resizeTimer = setTimeout(() => {
+            // Chạy lại hàm render chính để tính toán lại số trang
+            displayCurrentPage(); 
+        }, 200); 
+    });
 });
