@@ -203,38 +203,62 @@ scroll-margin-top: 80px;
 }
 
 /* =========================================
- CSS CHO PHẦN ĐÁNH GIÁ SAO (LOGIC JS MỚI - ĐÃ SỬA)
+ CSS CHO PHẦN ĐÁNH GIÁ SAO (LOGIC SVG MỚI)
 =========================================
 */
 
+/* 1. Container: Dùng flex để sao xếp hàng */
 #comment-rating-input {
-  /* Không cần 'direction: rtl' nữa */
-  text-align: left; 
+  display: flex;
+  align-items: center;
 }
 
+/* 2. Label (wrapper cho SVG) */
 .star-label {
-  font-size: 2rem;
-  color: #D1D5DB; /* text-gray-300 (màu sao mờ) */
   cursor: pointer;
-  transition: color 0.1s ease-in-out;
-  display: inline-block;
   padding: 0 0.1em;
+  /* Kích thước SVG */
+  width: 2.5rem; /* 40px */
+  height: 2.5rem; /* 40px */
 }
 
-/* Lớp .active này sẽ được JS thêm/xóa khi hover hoặc click */
-#comment-rating-input .star-label.active {
-  color: #FBBF24; /* text-yellow-400 */
+/* 3. SVG bên trong label */
+.star-label svg {
+  width: 100%;
+  height: 100%;
+  transition: color 0.1s ease-in-out;
 }
 
-/* * Xóa bỏ tất cả các logic CSS phức tạp cũ:
- * - #comment-rating-input:hover .star-label { ... }
- * - .star-label:hover ~ .star-label { ... }
- * - input[name="comment-rating"]:checked ~ .star-label { ... }
+/* * 4. LOGIC TOGGLE (Đơn giản):
+ * - Mặc định: Ẩn SVG đặc, hiện SVG rỗng (màu xám)
  */
+.star-label .star-filled {
+  display: none;
+}
+.star-label .star-outline {
+  display: inline-block;
+  color: #D1D5DB; /* Màu xám mờ (gray-300) */
+}
 
-/* Hiển thị sao trong bình luận (Không đổi) */
+/* * 5. Khi .active (do JS thêm vào):
+ * Hiện SVG đặc (màu vàng), ẩn SVG rỗng
+ */
+.star-label.active .star-filled {
+  display: inline-block;
+  color: #FBBF24; /* Màu vàng (amber-400) */
+}
+.star-label.active .star-outline {
+  display: none;
+}
+
+/* 6. CSS Hiển thị sao trong bình luận */
 .comment-rating {
-  font-size: 1rem;
-  color: #FBBF24;
+  display: flex; /* Xếp sao hàng ngang */
+  align-items: center;
   margin-bottom: 0.5rem;
+}
+.comment-rating-star {
+  width: 1rem; /* 16px */
+  height: 1rem; /* 16px */
+  color: #FBBF24; /* Màu vàng */
 }
